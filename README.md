@@ -21,3 +21,14 @@ npm run start
 ```
 
 打开开发服务器。
+
+
+## 开发进度
+
+### 前端
+
+初步完成了导航栏和论文讨论列表界面的开发。
+
+<img src="https://gitee.com/lyc0037/pics/raw/master/img/20201122225915.png"/>
+
+### 后端
