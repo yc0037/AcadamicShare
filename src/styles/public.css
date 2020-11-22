@@ -1,0 +1,19 @@
+@import '~antd/dist/antd.css';
+
+html {
+  font-size: 10px;
+}
+
+body {
+  margin: 0;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  /* background: #ccc; */
+}
+
+.flex-push {
+  margin-left: auto;
+}

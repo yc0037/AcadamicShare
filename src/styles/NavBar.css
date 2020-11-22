@@ -1,0 +1,56 @@
+@import 'public.css';
+
+.nav-bar {
+  height: 56px;
+  padding: 0 36px;
+  box-shadow: 0 5px 10px -5px #eeeeee;
+}
+
+.nav-logo {
+  font-size: 3.2rem;
+  font-weight: bold;
+  color: #000000;
+  text-decoration: none;
+}
+
+.nav-item {
+  font-size: 1.4rem;
+  margin: 0 10px;
+  width: 80px;
+  text-align: center;
+  transition: background-color 0.5s;
+}
+
+.nav-item:hover {
+  background-color: #eeeeee;
+}
+
+.nav-item.withdropdown {
+  position: relative;
+  line-height: 56px;
+}
+
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  z-index: 99;
+  opacity: 1;
+  top: 54px;
+  right: 0;
+  width: 100px;
+  text-align: left;
+  line-height: 4rem;
+  font-size: 1.2rem;
+  color: #222222;
+  background-color: #ffffff;
+  box-shadow: 0 5px 20px -3px #cccccc;
+}
+
+.nav-dropdown div {
+  padding: 0 10px;
+}
+
+.nav-dropdown div:hover {
+  background-color: #eeeeee;
+  transition: background-color 0.5s;
+}
