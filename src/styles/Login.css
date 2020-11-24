@@ -1,0 +1,18 @@
+@import './public.css';
+
+.middle-card {
+  width: 30%;
+  margin: 5% auto;
+  box-shadow: 0 0 20px -5px #cccccc;
+  transition: box-shadow 0.2s;
+}
+
+.middle-card:hover {
+  box-shadow: 2px 2px 20px -2px #cccccc;
+}
+
+.error-msg {
+  text-align: center;
+  color: red;
+  margin: 0 auto 10px;
+}

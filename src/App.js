@@ -4,26 +4,30 @@ import './styles/App.css';
 
 import NavBar from './NavBar';
 import MainPage from './MainPage';
+import Login from './Login';
+import Register from './Register';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userInfo: null,
+      userInfo: {
+        userName: 'Alice',
+      },
     };
   }
   render() {
-    setTimeout(() => {
-      this.setState({
-        userInfo: {
-          userName: 'Alice',
-        },
-      });
-    }, 2000);
+    const userInfo = this.state.userInfo;
     return (
       <BrowserRouter>
-        <NavBar userInfo={this.state.userInfo} />
+        <NavBar userInfo={userInfo} />
         <Switch>
+          <Route path="/login">
+            <Login userInfo={userInfo}/>
+          </Route>
+          <Route path="/register">
+            <Register userInfo={userInfo}/>
+          </Route>
           <Route path="/test/hello">
             <h1>Hello World!</h1>
           </Route>

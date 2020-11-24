@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Card, Empty, List, Divider, Button } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, PlusOutlined } from '@ant-design/icons';
 import './styles/MainPage.css';
 
 export default class MainPage extends React.Component {
@@ -33,6 +33,23 @@ export default class MainPage extends React.Component {
           hotDiscussLoading: false,
         });
       });
+    this.onLoadMore = this.onLoadMore.bind(this);
+  }
+  onLoadMore() {
+    const newDiscussList = this.state.discussList;
+    newDiscussList.push({
+      "id": 6,
+      "tag": "数据库",
+      "title": "Asynchronous memory access chaining",
+      "numOfReply": 3,
+      "lastReply": {
+        "user": "test1",
+        "time": "2020-11-02 13:22:15"
+      }
+    });
+    this.setState({
+      discussList: newDiscussList
+    });
   }
   render() {
     const {
@@ -54,27 +71,10 @@ export default class MainPage extends React.Component {
               lineHeight: '32px',
             }}
           >
-            <Button onClick={() => onLoadMore()} type="link">加载更多</Button>
+            <Button onClick={this.onLoadMore} type="link">加载更多</Button>
           </div>
         ) : <Divider><span style={{ color: "#cccccc", fontSize: "16px" }}>已经到底啦！</span></Divider>
       ) : null;
-    function onLoadMore() {
-      const newDiscussList = this.state.discussList;
-      newDiscussList.push({
-        "id": 6,
-        "tag": "数据库",
-        "title": "Asynchronous memory access chaining",
-        "numOfReply": 3,
-        "lastReply": {
-          "user": "test1",
-          "time": "2020-11-02 13:22:15"
-        }
-      });
-      this.setState({
-        discussList: newDiscussList
-      });
-    }
-    onLoadMore = onLoadMore.bind(this);
     return (
       <>
         <Row gutter={48} className="main-row" style={{
@@ -129,6 +129,15 @@ export default class MainPage extends React.Component {
             <Card
               loading={discussLoading}
               className="dash-board"
+              title="全部讨论"
+              extra={[
+                <Button
+                  type="primary"
+                  onClick={() => alert('发起讨论')}
+                >
+                  <span><PlusOutlined /> 发起讨论</span>
+                </Button>
+              ]}
             >
               <List
                 loadMore={loadMore}

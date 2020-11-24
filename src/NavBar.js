@@ -1,3 +1,4 @@
+import { Switch } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './styles/NavBar.css';
@@ -5,6 +6,10 @@ import './styles/NavBar.css';
 export default class NavBar extends React.Component {
   constructor(props) {
     super(props);
+    
+    this.state = {
+      login: false,
+    }
 
     this.openDropdown = this.openDropdown.bind(this);
     this.closeDropdown = this.closeDropdown.bind(this);
@@ -25,9 +30,14 @@ export default class NavBar extends React.Component {
     return (
       <div className="nav-bar flex">
         <Link to="/" className="nav-logo">LOGO</Link>
-        <div className="flex-push">
+        <div className="flex-push" style={{width: "30px", marginRight: "30px"}}>
+          <Switch checked={this.state.login} onChange={(checked) => {
+            this.setState({ login: checked });
+          }} />
+        </div>
+        <div>
           {
-            userInfo ?
+            this.state.login ?
             <>
               <div
                 className="nav-item withdropdown"
@@ -43,8 +53,8 @@ export default class NavBar extends React.Component {
             </>
             :
             <>
-              <span className="nav-item">注册</span>
-              <span className="nav-item">登录</span>
+              <Link to="/register"><span className="nav-item">注册</span></Link>
+              <Link to="/login"><span className="nav-item">登录</span></Link>
             </>
           }
         </div>
