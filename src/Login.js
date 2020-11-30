@@ -3,7 +3,8 @@ import './styles/Login.css';
 import { Card, Form, Input, Button } from 'antd';
 
 export default class Login extends React.Component {
-  componentDidMount() {
+  constructor(props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit(data) {

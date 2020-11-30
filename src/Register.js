@@ -5,11 +5,6 @@ import { Card, Form, Input, Button } from 'antd';
 export default class Register extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      userNameMsg: false,
-    };
-  }
-  componentDidMount() {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit(data) {
