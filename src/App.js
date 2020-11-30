@@ -12,12 +12,13 @@ class App extends React.Component {
     super(props);
     this.state = {
       userInfo: {
+        uid: "0",
         userName: 'Alice',
       },
     };
   }
   render() {
-    const userInfo = this.state.userInfo;
+    const { userInfo } = this.state;
     return (
       <BrowserRouter>
         <NavBar userInfo={userInfo} />
@@ -32,7 +33,7 @@ class App extends React.Component {
             <h1>Hello World!</h1>
           </Route>
           <Route path="/">
-            <MainPage />
+            <MainPage userInfo={userInfo}/>
           </Route>
         </Switch>
       </BrowserRouter>

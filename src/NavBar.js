@@ -1,4 +1,5 @@
-import { Switch } from 'antd';
+import { Switch, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './styles/NavBar.css';
@@ -44,9 +45,8 @@ export default class NavBar extends React.Component {
                 onMouseEnter={this.openDropdown}
                 onMouseLeave={this.closeDropdown}
               >
-                <div>{userInfo?.userName}</div>
+                <div><Avatar style={{ backgroundColor: '#40a9ff', marginRight: "10px" }} size="small" icon={<UserOutlined />} />{userInfo?.userName}</div>
                 <div className="nav-dropdown">
-                  <div>个人主页</div>
                   <div>退出登录</div>
                 </div>
               </div>

@@ -1,0 +1,23 @@
+{
+  "lastVisit": "2020-11-12T12:12:12+08:00",
+  "list": [
+    {
+      "id": 4,
+      "tag": "数据库",
+      "title": "AI Meets AI: Leveraging Query Executions to Improve Index Recommendations",
+      "lastReply": "2020-11-08T12:12:12+08:00"
+    },
+    {
+      "id": 2,
+      "tag": "数据库",
+      "title": "Access Path Selection in Main-Memory Optimized Data Systems: Should I Scan or Should I Probe?",
+      "lastReply": "2020-11-15T10:12:59+08:00"
+    },
+    {
+      "id": 1,
+      "tag": "数据库",
+      "title": "A Seven-Dimensional Analysis of Hashing Methods and its Implications on Query Processing",
+      "lastReply": "2020-11-18T13:14:15+08:00"
+    }
+  ]
+}

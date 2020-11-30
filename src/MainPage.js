@@ -1,7 +1,10 @@
 import React from 'react';
-import { Row, Col, Card, Empty, List, Divider, Button } from 'antd';
+import { Row, Col, Card, Empty, List, Divider, Button, Avatar } from 'antd';
 import { UserOutlined, PlusOutlined } from '@ant-design/icons';
+import moment from 'moment';
 import './styles/MainPage.css';
+import "moment/locale/zh-cn"
+moment.locale('zh-cn');
 
 export default class MainPage extends React.Component {
   constructor(props) {
@@ -12,7 +15,9 @@ export default class MainPage extends React.Component {
       hotDiscussList: [],
       noticeLoading: false,
       discussLoading: true,
-      hotDiscussLoading: true
+      hotDiscussLoading: true,
+      starList: [],
+      starLoading: true,
     };
   }
   componentDidMount() {
@@ -25,12 +30,20 @@ export default class MainPage extends React.Component {
           discussLoading: false,
         });
       });
-    fetch('/data/hotDiscussion.json')
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          hotDiscussList: data,
-          hotDiscussLoading: false,
+      fetch('/data/hotDiscussion.json')
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            hotDiscussList: data,
+            hotDiscussLoading: false,
+        });
+      });
+      fetch('/data/starList.json')
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            starList: data,
+            starLoading: false,
         });
       });
     this.onLoadMore = this.onLoadMore.bind(this);
@@ -44,7 +57,7 @@ export default class MainPage extends React.Component {
       "numOfReply": 3,
       "lastReply": {
         "user": "test1",
-        "time": "2020-11-02 13:22:15"
+        "time": "2020-11-02T13:22:15+08:00"
       }
     });
     this.setState({
@@ -58,6 +71,8 @@ export default class MainPage extends React.Component {
       noticeLoading,
       discussLoading,
       hotDiscussLoading,
+      starList,
+      starLoading,
       nDiscuss
     } = this.state;
     const loadMore =
@@ -75,6 +90,9 @@ export default class MainPage extends React.Component {
           </div>
         ) : <Divider><span style={{ color: "#cccccc", fontSize: "16px" }}>已经到底啦！</span></Divider>
       ) : null;
+    const { userInfo } = this.props;
+    const { lastVisit } = starList;
+    // const userInfo = null;
     return (
       <>
         <Row gutter={48} className="main-row" style={{
@@ -83,20 +101,51 @@ export default class MainPage extends React.Component {
         }}>
           <Col span={12}>
             <Card
-              title="通知公告"
+              title="关注动态"
               headStyle={{ fontWeight: "bold", }}
+              extra={<>
+                <Avatar style={{ backgroundColor: '#40a9ff', marginRight: "10px" }} size="small" icon={<UserOutlined />} />{userInfo?.userName}
+              </>}
               className="dash-board"
               loading={noticeLoading}
             >
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description="暂无公告"
-              />
+              {
+                userInfo ? 
+                <Row>
+                  <Col span={24}>
+                    <List
+                      loading={starLoading}
+                      dataSource={starList.list?.slice(0, 5).sort((a, b) => moment(b.lastReply).diff(moment(a.lastReply)))}
+                      renderItem={item => (
+                        <List.Item className="dash-board-item" key={item.id}>
+                          <List.Item.Meta
+                            title={
+                            <div className="flex">
+                              <div className={`dot-${moment(item.lastReply, moment.ISO_8601).diff(moment(lastVisit, moment.ISO_8601)) > 0}`}>{wordTrunc(item.title, 45)}</div>
+                              <div className="flex-push time-info">
+                                {moment.duration(moment(item.lastReply, moment.ISO_8601).diff(moment())).locale('zh-cn').humanize(true)}
+                              </div>
+                            </div>
+                            }
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  </Col>
+                </Row>
+                :
+                <div className="flex center" style={{height: "300px"}}>
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="登录后可以查看收藏的讨论"
+                  />
+                </div>
+              }
             </Card>
           </Col>
           <Col span={12}>
             <Card
-              title="学术讨论"
+              title="热点讨论"
               headStyle={{ fontWeight: "bold", }}
               className="dash-board"
               loading={hotDiscussLoading}
@@ -129,6 +178,7 @@ export default class MainPage extends React.Component {
             <Card
               loading={discussLoading}
               className="dash-board"
+              headStyle={{ fontWeight: "bold", }}
               title="全部讨论"
               extra={[
                 <Button
@@ -145,7 +195,7 @@ export default class MainPage extends React.Component {
                 {
                   discussList.map(value => {
                     return (
-                      <List.Item key={value.id}>
+                      <List.Item className="dash-board-item" key={value.id}>
                         <List.Item.Meta 
                           title={
                             <div className="discuss-item flex">
@@ -153,7 +203,7 @@ export default class MainPage extends React.Component {
                               <div className="discuss-item-title"><span>{`[ ${value.tag} ]`}</span>{` ${value.title}`}</div>
                               <div className="discuss-item-reply flex-push">
                                 <div className="discuss-item-reply-user"><UserOutlined style={{ fontSize: "12px" }} /> {value.lastReply.user}</div>
-                                <div className="discuss-item-reply-time">{value.lastReply.time}</div>
+                                <div className="discuss-item-reply-time time-info">{moment(value.lastReply.time, moment.ISO_8601).format('YYYY-MM-DD HH:mm')}</div>
                               </div>
                             </div>
                           }
