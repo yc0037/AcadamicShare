@@ -1,8 +1,10 @@
-import { Switch, Avatar } from 'antd';
+import { Switch, Avatar, Input, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './styles/NavBar.css';
+
+const { Search } = Input;
 
 export default class NavBar extends React.Component {
   constructor(props) {
@@ -10,10 +12,12 @@ export default class NavBar extends React.Component {
     
     this.state = {
       login: false,
+      searchKeyword: "",
     }
 
     this.openDropdown = this.openDropdown.bind(this);
     this.closeDropdown = this.closeDropdown.bind(this);
+    this.changeSearchKeyword = this.changeSearchKeyword.bind(this);
   }
 
   openDropdown(e) {
@@ -26,17 +30,38 @@ export default class NavBar extends React.Component {
     dropdown.style.display = 'none';
   }
 
+  changeSearchKeyword(e) {
+    this.setState({
+      searchKeyword: e.target.value,
+    });
+  }
+
   render() {
     const userInfo = this.props.userInfo;
+    const searchKeyword = this.state.searchKeyword;
     return (
       <div className="nav-bar flex">
         <Link to="/" className="nav-logo">LOGO</Link>
-        <div className="flex-push" style={{width: "30px", marginRight: "30px"}}>
+        <div className="flex-push nav-block" style={{width: "30px"}}>
           <Switch checked={this.state.login} onChange={(checked) => {
             this.setState({ login: checked });
           }} />
         </div>
-        <div>
+        <div className="nav-block">
+          <Search
+            placeholder="请输入搜索关键词"
+            value={searchKeyword}
+            onChange={this.changeSearchKeyword}
+            allowClear
+            enterButton={
+              <Button type="primary">
+                <Link to={`/search?keyword=${searchKeyword}`} >搜索</Link>
+              </Button>
+            }
+            size="default"
+          />
+        </div>
+        <div className="nav-block" style={{width: "100px"}}>
           {
             this.state.login ?
             <>

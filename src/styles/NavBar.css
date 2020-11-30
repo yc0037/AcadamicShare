@@ -54,3 +54,7 @@
   background-color: #eeeeee;
   transition: background-color 0.5s;
 }
+
+.nav-block {
+  margin-right: 30px;
+}

@@ -6,6 +6,9 @@ import NavBar from './NavBar';
 import MainPage from './MainPage';
 import Login from './Login';
 import Register from './Register';
+import Discuss from './Discuss';
+import Paper from './Paper';
+import Search from './Search';
 
 class App extends React.Component {
   constructor(props) {
@@ -29,6 +32,9 @@ class App extends React.Component {
           <Route path="/register">
             <Register userInfo={userInfo}/>
           </Route>
+          <Route path="/discuss" component={Discuss} />
+          <Route path="/paper" component={Paper} />
+          <Route path="/search" component={Search} />
           <Route path="/test/hello">
             <h1>Hello World!</h1>
           </Route>
