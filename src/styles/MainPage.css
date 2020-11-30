@@ -19,6 +19,7 @@
 .dash-board-item {
   transition: background-color 0.2s;
   padding-left: 10px;
+  padding-right: 10px;
 }
 
 .dash-board-item:hover {
@@ -59,4 +60,14 @@
 
 .discuss-item-reply {
   font-weight: 400;
+}
+
+.dot-false::before {
+  content: "\2002\2002";
+}
+
+.dot-true::before {
+  content: "\2022\2002";
+  color: red;
+  font-weight: bold;
 }
