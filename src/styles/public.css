@@ -8,6 +8,10 @@ body {
   margin: 0;
 }
 
+a {
+  color: #333333;
+}
+
 .flex {
   display: flex;
   align-items: center;

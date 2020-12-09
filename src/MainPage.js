@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Row, Col, Card, Empty, List, Divider, Button, Avatar } from 'antd';
 import { UserOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -121,7 +122,7 @@ export default class MainPage extends React.Component {
                           <List.Item.Meta
                             title={
                             <div className="flex">
-                              <div className={`dot-${moment(item.lastReply, moment.ISO_8601).diff(moment(lastVisit, moment.ISO_8601)) > 0}`}>{wordTrunc(item.title, 45)}</div>
+                              <div className={`dot-${moment(item.lastReply, moment.ISO_8601).diff(moment(lastVisit, moment.ISO_8601)) > 0}`}><Link to={`/paper?id=${item.id}`}>{wordTrunc(item.title, 45)}</Link></div>
                               <div className="flex-push time-info">
                                 {moment.duration(moment(item.lastReply, moment.ISO_8601).diff(moment())).locale('zh-cn').humanize(true)}
                               </div>
@@ -158,7 +159,7 @@ export default class MainPage extends React.Component {
                         title={
                           <div>
                             <span className={`dash-board-order rank${index + 1}`}>{index + 1}</span>
-                            <span>{wordTrunc(value.title, 55)}</span>
+                            <span><Link to={`/paper?id=${value.id}`}>{wordTrunc(value.title, 55)}</Link></span>
                           </div>
                         }
                       />
@@ -200,7 +201,7 @@ export default class MainPage extends React.Component {
                           title={
                             <div className="discuss-item flex">
                               <div className="discuss-item-nreply">{value.numOfReply}</div>
-                              <div className="discuss-item-title"><span>{`[ ${value.tag} ]`}</span>{` ${value.title}`}</div>
+                              <div className="discuss-item-title"><Link to={`/paper?id=${value.id}`}><span>{`[ ${value.tag} ]`}</span>{` ${value.title}`}</Link></div>
                               <div className="discuss-item-reply flex-push">
                                 <div className="discuss-item-reply-user"><UserOutlined style={{ fontSize: "12px" }} /> {value.lastReply.user}</div>
                                 <div className="discuss-item-reply-time time-info">{moment(value.lastReply.time, moment.ISO_8601).format('YYYY-MM-DD HH:mm')}</div>
