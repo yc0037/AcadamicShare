@@ -224,3 +224,105 @@
 ```
 
 登录请求提交成功后，要求服务端维护与客户端连接的 session，并将 session id 通过 cookie 传递给客户端，用来识别客户端的身份。
+
+## 5 DiscussionPage
+
+### 5.1 获取该讨论的全部留言信息
+
+方法： `GET`
+
+参数：`offset`
+
+说明：按照最后发表时间倒序排列全部留言列表，每次请求返回从`offset`开始的10个留言项。
+
+返回值：
+
+``` json
+{
+  "nComment": 10,          // 留言总数
+  "commentList": [     // 请求新增的留言列表，每次10个条目
+    {
+      "id": 1,
+      "tag": "数据库",
+      "content": "I use the Nsight extension/add-on for Microsoft Visual Studio. Nvidia provides similar tools for other environments.",
+      "numOfLike": 37,
+      "commentInfo": {
+        "user": "Hugh Lachlan Kennedy",
+        "time": "2020-11-18T13:14:15+08:00"
+      }
+    },
+    {
+      "id": 2,
+      "tag": "数据库",
+      "content": "The following link can be useful for you: https://www.mathworks.com",
+      "numOfLike": 17,
+      "comment": {
+        "user": "Ali Khorramifar",
+        "time": "2020-11-17T13:14:15+08:00"
+      }
+    },
+    ...
+  ]
+}
+```
+
+### 5.2 获取该讨论的最热门的三条留言信息
+
+方法： `GET`
+
+参数：`offset`
+
+说明：按照点赞数从高到低排列留言信息，请求返回最受欢迎的三条留言信息 。
+
+返回值：
+
+``` json
+{
+  "nComment": 3,          // 返回的留言数量
+  "commentList": [     // 请求最热门的留言列表，最多3个 
+    {
+      "id": 1,
+      "tag": "数据库",
+      "content": "I use the Nsight extension/add-on for Microsoft Visual Studio. Nvidia provides similar tools for other environments.",
+      "numOfLike": 37,
+      "commentInfo": {
+        "user": "Hugh Lachlan Kennedy",
+        "time": "2020-11-18T13:14:15+08:00"
+      }
+    },
+    {
+      "id": 2,
+      "tag": "数据库",
+      "content": "The following link can be useful for you: https://www.mathworks.com",
+      "numOfLike": 17,
+      "comment": {
+        "user": "Ali Khorramifar",
+        "time": "2020-11-17T13:14:15+08:00"
+      }
+    },
+    ...
+  ]
+}
+```
+
+### 5.3 获取该讨论的问题信息
+
+方法： `GET`
+
+参数：`offset`
+
+说明：返回这个讨论的问题信息，包括讨论的论文编号、标题、问题的发布者，发布时间，收藏数,讨论的标题，讨论的内容。
+
+返回值：
+
+``` json
+{
+  "discussionContent": "How to generate and execute optimized CUDA kernels for specific algorithm structures and patterns in MATLAB code?",  
+  "discussionTitle":"How to generate and execute optimized CUDA kernels for specific algorithm structures and patterns in MATLAB code?" ,    
+  "paperID": 114514,
+  "paperTitle":"GraphNorm: A Principled Approach to Accelerating Graph Neural Network Training",     
+  "publisher":"Tianle Cai",
+  "publishTime":"2020-11-17T13:14:15+08:00",
+  "numOfLike":"34",
+}
+```
