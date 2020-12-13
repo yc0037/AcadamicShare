@@ -1,0 +1,31 @@
+@import '~antd/dist/antd.css';
+
+html {
+  font-size: 10px;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: #333333;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  /* background: #ccc; */
+}
+
+.flex.center {
+  justify-content: center;
+}
+
+.flex-push {
+  margin-left: auto;
+}
+
+.time-info {
+  color: #bbbbbb;
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row,Radio,Card,Button} from 'antd';
+import './styles/Discuss.css';
 import { PlusOutlined,EditOutlined,DeleteOutlined,DownloadOutlined,SearchOutlined,LeftOutlined,RightOutlined } from '@ant-design/icons';
-
 export default class Discuss extends React.Component {
   /*render() {
     return <h1>{new URLSearchParams(this.props.location.search).get('id')}</h1>
