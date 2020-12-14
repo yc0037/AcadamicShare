@@ -29,3 +29,7 @@ a {
 .time-info {
   color: #bbbbbb;
 }
+
+.divider {
+  margin: 16px 0;
+}

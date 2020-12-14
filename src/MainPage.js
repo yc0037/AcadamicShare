@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Card, Empty, List, Divider, Button, Avatar } from 'antd';
 import { UserOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { conf } from './conf.js';
 import './styles/MainPage.css';
-import "moment/locale/zh-cn"
+import "moment/locale/zh-cn";
 moment.locale('zh-cn');
 
 export default class MainPage extends React.Component {
@@ -105,7 +106,7 @@ export default class MainPage extends React.Component {
               title="关注动态"
               headStyle={{ fontWeight: "bold", }}
               extra={<>
-                <Avatar style={{ backgroundColor: '#40a9ff', marginRight: "10px" }} size="small" icon={<UserOutlined />} />{userInfo?.userName}
+                {userInfo ? <><Avatar style={{ backgroundColor: '#40a9ff', marginRight: "10px" }} size="small" icon={<UserOutlined />} />{userInfo?.userName}</> : null}
               </>}
               className="dash-board"
               loading={noticeLoading}
@@ -135,7 +136,7 @@ export default class MainPage extends React.Component {
                   </Col>
                 </Row>
                 :
-                <div className="flex center" style={{height: "300px"}}>
+                <div className="flex center" style={{height: "250px"}}>
                   <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                     description="登录后可以查看收藏的讨论"
@@ -182,12 +183,9 @@ export default class MainPage extends React.Component {
               headStyle={{ fontWeight: "bold", }}
               title="全部讨论"
               extra={[
-                <Button
-                  type="primary"
-                  onClick={() => alert('发起讨论')}
-                >
+                <Link to="/adddiscuss"><Button type="primary">
                   <span><PlusOutlined /> 发起讨论</span>
-                </Button>
+                </Button></Link>
               ]}
             >
               <List

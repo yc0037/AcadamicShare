@@ -1,14 +1,34 @@
 import React from 'react';
 import './styles/Login.css';
-import { Card, Form, Input, Button } from 'antd';
+import { Card, Form, Input, Button, message } from 'antd';
+import md5 from 'md5';
+import { withRouter } from 'react-router-dom';
+import { conf } from './conf.js';
 
-export default class Register extends React.Component {
+class Register extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleSubmit(data) {
-    console.log(data);
+  async handleSubmit(data) {
+    const REGISTER_SUCCESS = 0;
+    const REGISTER_FAILED = 1;
+    let result = await fetch(`${conf.server}/user_system/register`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+      },
+      body: JSON.stringify({
+        username: data.username,
+        password: md5(data.password),
+      })
+    }).then(response => response.json());
+    if (result.code === REGISTER_FAILED) {
+      message.error(result.msg);
+    } else if (result.code === REGISTER_SUCCESS) {
+      message.success(result.msg);
+      setTimeout(() => { this.props.history.push('/login'); }, 1000);
+    }
   }
   handleFailed(error) {
     console.log(error);
@@ -27,6 +47,7 @@ export default class Register extends React.Component {
           onFinishFailed={this.handleFailed}
         >
           <Form.Item
+            key="username"
             label="账号"
             name="username"
             rules={[
@@ -42,6 +63,7 @@ export default class Register extends React.Component {
             <Input placeholder="请输入用户名" />
           </Form.Item>
           <Form.Item
+            key="password"
             label="密码"
             name="password"
             rules={[{
@@ -52,6 +74,7 @@ export default class Register extends React.Component {
             <Input placeholder="请输入密码" type="password" />
           </Form.Item>
           <Form.Item
+            key="confirmPassword"
             label="确认密码"
             name="confirmPassword"
             dependencies={['password']}
@@ -83,3 +106,5 @@ export default class Register extends React.Component {
     )
   }
 }
+
+export default withRouter(Register);

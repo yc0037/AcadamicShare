@@ -1,14 +1,38 @@
 import React from 'react';
 import './styles/Login.css';
-import { Card, Form, Input, Button } from 'antd';
+import { Card, Form, Input, Button, message } from 'antd';
+import { withRouter } from 'react-router-dom';
+import md5 from 'md5';
 
-export default class Login extends React.Component {
+class Login extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleSubmit(data) {
-    console.log(data);
+  async handleSubmit(data) {
+    const LOGIN_SUCCESS = 0;
+    const LOGIN_FAILED = 1;
+    let result = await fetch('http://localhost:8000/user_system/login',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+      },
+      body: JSON.stringify({
+        username: data.username,
+        password: md5(data.password),
+      }),
+      credentials: 'include'
+    }).then(response => response.json());
+    
+    if (result.code === LOGIN_FAILED) {
+      message.error(result.msg);
+    } else if (result.code === LOGIN_SUCCESS) {
+      message.success(result.msg);
+      this.props.updateLogin();
+      setTimeout(() => { 
+        this.props.history.push('/');
+      }, 1000);
+    }
   }
   handleFailed(error) {
     console.log(error);
@@ -58,3 +82,5 @@ export default class Login extends React.Component {
     )
   }
 }
+
+export default withRouter(Login);

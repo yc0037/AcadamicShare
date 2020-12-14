@@ -11,7 +11,6 @@ export default class NavBar extends React.Component {
     super(props);
     
     this.state = {
-      login: false,
       searchKeyword: "",
     }
 
@@ -42,10 +41,8 @@ export default class NavBar extends React.Component {
     return (
       <div className="nav-bar flex">
         <Link to="/" className="nav-logo">LOGO</Link>
-        <div className="flex-push nav-block" style={{width: "30px"}}>
-          <Switch checked={this.state.login} onChange={(checked) => {
-            this.setState({ login: checked });
-          }} />
+        <div className="flex-push nav-block">
+          <Switch checked={this.props.login} onChange={this.props.handleSwitch} />
         </div>
         <div className="nav-block">
           <Search
@@ -63,7 +60,7 @@ export default class NavBar extends React.Component {
         </div>
         <div className="nav-block" style={{width: "100px"}}>
           {
-            this.state.login ?
+            userInfo ?
             <>
               <div
                 className="nav-item withdropdown"
