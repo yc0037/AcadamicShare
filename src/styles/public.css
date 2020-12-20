@@ -12,6 +12,10 @@ a {
   color: #333333;
 }
 
+h1 {
+  font-size: 6rem;
+}
+
 .flex {
   display: flex;
   align-items: center;

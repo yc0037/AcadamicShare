@@ -16,7 +16,7 @@
 .nav-item {
   font-size: 1.4rem;
   margin: 0 10px;
-  width: 80px;
+  min-width: 80px;
   text-align: center;
   transition: background-color 0.5s;
 }

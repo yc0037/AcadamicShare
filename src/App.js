@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { request } from './utils.js';
 import './styles/App.css';
 
 import NavBar from './NavBar';
@@ -10,6 +11,8 @@ import Discuss from './Discuss';
 import Paper from './Paper';
 import Search from './Search';
 import AddDiscuss from './AddDiscuss';
+import UserInfo from './UserInfo';
+import MyInfo from './MyInfo';
 
 import { conf } from './conf.js';
 
@@ -29,7 +32,13 @@ class App extends React.Component {
   handleSwitch(checked) {
     if (checked) {
       this.setState({
-        userInfo: { userName: 'Alice' },
+        userInfo: { 
+          userName: 'Alice',
+          email: 'alice@test.org',
+          profile: '内容内容内容内容内容内容内容内容内容内容内容内容内容内容',
+          follow: [],
+          like: []
+        },
         login: true
       });
     } else {
@@ -40,14 +49,15 @@ class App extends React.Component {
     }
   }
   updateLogin() {
-    fetch(`${conf.server}/user_system/get_name`, {
-      credentials: 'include'
-    })
-    .then(response => response.json())
+    request(`${conf.server}/user_system/get_my_info`)
     .then(result => {
       if (!result.hasOwnProperty('code')) {
         this.setState({
           userInfo: { userName: result.username }
+        });
+      } else if (result.code === 123) {
+        this.setState({
+          userInfo: null
         });
       }
     });
@@ -60,6 +70,7 @@ class App extends React.Component {
           userInfo={userInfo} 
           handleSwitch={this.handleSwitch}
           login={this.state.login}
+          updateLogin={this.updateLogin}
         />
         <Switch>
           <Route path="/login">
@@ -72,6 +83,8 @@ class App extends React.Component {
           <Route path="/paper" component={Paper} />
           <Route path="/search" component={Search} />
           <Route path="/adddiscuss" component={AddDiscuss} />
+          <Route path="/userinfo" component={UserInfo} />
+          <Route path="/myinfo" render={routeProps => <MyInfo userInfo={userInfo} {...routeProps}/>} />
           <Route path="/test/hello">
             <h1>Hello World!</h1>
           </Route>

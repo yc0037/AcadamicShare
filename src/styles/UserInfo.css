@@ -1,0 +1,18 @@
+@import './public.css';
+
+.info-item {
+  color: #333333;
+  font-size: 1.6rem;
+}
+
+.profile {
+  color: #bbbbbb;
+  font-size: 1.8rem;
+  margin-left: 2rem;
+}
+
+.text-button {
+  width: 2rem;
+  padding: 0;
+  margin-left: 0.3rem;
+}
