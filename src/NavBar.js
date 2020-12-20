@@ -1,8 +1,10 @@
-import { Switch, Avatar, Input, Button } from 'antd';
+import { Switch, Avatar, Input, Button, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './styles/NavBar.css';
+import { conf } from './conf.js';
+import { request } from './utils.js';
 
 const { Search } = Input;
 
@@ -58,7 +60,7 @@ export default class NavBar extends React.Component {
             size="default"
           />
         </div>
-        <div className="nav-block" style={{width: "100px"}}>
+        <div className="nav-block" style={{minWidth: "100px"}}>
           {
             userInfo ?
             <>
@@ -67,9 +69,32 @@ export default class NavBar extends React.Component {
                 onMouseEnter={this.openDropdown}
                 onMouseLeave={this.closeDropdown}
               >
-                <div><Avatar style={{ backgroundColor: '#40a9ff', marginRight: "10px" }} size="small" icon={<UserOutlined />} />{userInfo?.userName}</div>
+                <div>
+                  <Avatar
+                    style={{ backgroundColor: '#40a9ff', marginRight: "10px" }}
+                    size="small"
+                    icon={<UserOutlined />}
+                  />
+                  {userInfo?.userName}
+                </div>
                 <div className="nav-dropdown">
-                  <div>退出登录</div>
+                  <Button
+                    type='text'
+                    style={{ margin: 0, width: '100%' }}
+                  >
+                    <Link to="/myinfo">个人主页</Link>
+                  </Button>
+                  <Button
+                    type='text'
+                    style={{ margin: 0, width: '100%' }}
+                    onClick={() => {
+                      request(`${conf.server}/user_system/logout`)
+                        .then(result => {
+                          message.success(result.msg);
+                          this.props.updateLogin();
+                        });
+                    }}
+                  >退出登录</Button>
                 </div>
               </div>
             </>

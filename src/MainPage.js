@@ -4,6 +4,7 @@ import { Row, Col, Card, Empty, List, Divider, Button, Avatar } from 'antd';
 import { UserOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { conf } from './conf.js';
+import { wordTrunc } from './utils.js';
 import './styles/MainPage.css';
 import "moment/locale/zh-cn";
 moment.locale('zh-cn');
@@ -218,8 +219,4 @@ export default class MainPage extends React.Component {
       </>
     );
   }
-}
-
-function wordTrunc(s, length) {
-  return s.slice(0, length) + (s.length > length ? '...' : null)
 }

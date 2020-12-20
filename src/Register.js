@@ -4,16 +4,17 @@ import { Card, Form, Input, Button, message } from 'antd';
 import md5 from 'md5';
 import { withRouter } from 'react-router-dom';
 import { conf } from './conf.js';
+import { request } from './utils.js';
 
 class Register extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  async handleSubmit(data) {
+  handleSubmit(data) {
     const REGISTER_SUCCESS = 0;
     const REGISTER_FAILED = 1;
-    let result = await fetch(`${conf.server}/user_system/register`,{
+    request(`${conf.server}/user_system/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
@@ -22,13 +23,14 @@ class Register extends React.Component {
         username: data.username,
         password: md5(data.password),
       })
-    }).then(response => response.json());
-    if (result.code === REGISTER_FAILED) {
-      message.error(result.msg);
-    } else if (result.code === REGISTER_SUCCESS) {
-      message.success(result.msg);
-      setTimeout(() => { this.props.history.push('/login'); }, 1000);
-    }
+    }).then(result => {
+      if (result?.code === REGISTER_FAILED) {
+        message.error(result.msg);
+      } else if (result?.code === REGISTER_SUCCESS) {
+        message.success(result.msg);
+        setTimeout(() => { this.props.history.replace('/login'); }, 1000);
+      }
+    });
   }
   handleFailed(error) {
     console.log(error);
@@ -56,7 +58,9 @@ class Register extends React.Component {
                 message: '请输入用户名！'
               },
               {
-                type: "string"
+                type: "string",
+                pattern: new RegExp('^[a-zA-Z0-9_]{3,16}$'),
+                message: '账号应由3-16位数字、字母或下划线组成'
               }
             ]}
           >
@@ -69,7 +73,12 @@ class Register extends React.Component {
             rules={[{
               required: true,
               message: '请输入密码！'
-            }]}
+            },
+              {
+                type: "string",
+                pattern: new RegExp('^[a-zA-Z0-9][a-zA-Z0-9_ ]{2,15}$'),
+                message: '密码应由3-16位数字、字母、空格或下划线组成，并且不能以空格或下划线开头'
+              }]}
           >
             <Input placeholder="请输入密码" type="password" />
           </Form.Item>
@@ -81,7 +90,7 @@ class Register extends React.Component {
             rules={[
               {
                 required: true,
-                message: '请输入密码！'
+                message: '请再次输入密码！'
               },
               ({ getFieldValue }) => ({
                 validator(rule, value) {
