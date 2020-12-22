@@ -18,15 +18,18 @@ class AddDiscuss extends React.Component {
     this.handleOk = this.handleOk.bind(this);
     this.requestPaperList = this.requestPaperList.bind(this);
   }
+
   componentDidMount() {
     this.requestPaperList();
   }
+
   requestPaperList() {
     request(`${conf.server}/paper/get_all`)
       .then(result => this.setState({
         paperList: result === null ? [] : result.paperlist
       }));
   }
+
   async handleOk(data) {
     this.setState({
       modalButtonLoading: true,
@@ -44,8 +47,20 @@ class AddDiscuss extends React.Component {
       })
     });
     if (paper === null || paper.code !== 0) {
+      this.setState({ modalButtonLoading: false });
       return null;
     }
+
+    data.file.set('id', paper.id);
+    request(`${conf.server}/paper/upload`, {
+      method: 'POST',
+      body: data.file,
+    }).then(response => {
+      if (response.code !== 0) {
+        message.error(response.msg);
+      }
+    });
+
     request(`${conf.server}/paper/add_tag`, {
       method: 'POST',
       headers: {
@@ -56,11 +71,12 @@ class AddDiscuss extends React.Component {
         tag: data.tags.split(','),
       }),
     }).then((response) => {
-      message.success(response.msg);
+      message.success(paper.msg);
       this.setState({ modalButtonLoading: false, modalOpen: false });
       this.requestPaperList();
     });
   }
+
   async handleSubmit(data) {
     const discuss = await request(`${conf.server}/discussion/create`, {
       method: 'POST',
@@ -88,7 +104,7 @@ class AddDiscuss extends React.Component {
       }),
     }).then(response => {
       if (response.code === 0) {
-        message.success(response.msg);
+        message.success(discuss.msg);
         setTimeout(() => { 
           this.props.history.replace(`/discuss?id=${discuss.id}`);
         }, 1000);
@@ -96,8 +112,8 @@ class AddDiscuss extends React.Component {
         message.error(response.msg);
       }
     });
-
   }
+  
   render() {
     const {modalOpen, modalButtonDisabled, modalButtonLoading} = this.state;
     return (
@@ -142,7 +158,7 @@ class AddDiscuss extends React.Component {
                 { required: true, message: '请选择论文发表年份！' }
               ]}
             >
-              <Select placeholder="请选择论文发表年份" defaultValue={2020}>
+              <Select placeholder="请选择论文发表年份">
                 {
                   (() => {
                     const options = [];
@@ -179,10 +195,7 @@ class AddDiscuss extends React.Component {
               label="文件"
               name="file"
             >
-              <Uploader
-                changeLoading={val => this.setState({modalButtonLoading: val})}
-                changeDisabled={val => this.setState({modalButtonDisabled: val})}
-              />
+              <Uploader />
             </Form.Item>
             <Form.Item
               wrapperCol={{ span: 2, offset: 11 }}
@@ -276,51 +289,37 @@ class AddDiscuss extends React.Component {
   }
 }
 
-function Uploader({value = '', onChange, ...props}) {
+function Uploader({value = null, onChange}) {
   const triggerChange = (changedValue) => {
     if (onChange) {
-      onChange(changedValue || value);
+      onChange(changedValue);
     }
   };
-  const { changeDisabled, changeLoading } = props;
   return (
-    <input
-      type="file"
-      id="file"
-      accept=".pdf"
-      onChange={(e) => {
-        const input = document.querySelector('#file');
-        const fileList = input.files;
-        if (fileList.length === 0) {
-          triggerChange('');
-        } else {
-          const file = fileList[0];
-          if (file.size > 200 * 1024 * 1024) {
-            message.error('文件大小不能超过200MB！');
-            triggerChange('');
-            return null;
+    <form id="upload-file" encType="multipart/form-data">
+      <input name="id" value={-1} hidden />
+      <input
+        type="file"
+        id="file"
+        name="paper_file"
+        accept=".pdf"
+        onChange={(e) => {
+          const input = document.querySelector('#file');
+          const fileList = input.files;
+          if (fileList.length === 0) {
+            triggerChange(null);
+          } else {
+            const file = fileList[0];
+            if (file.size > 200 * 1024 * 1024) {
+              message.error('文件大小不能超过200MB！');
+              triggerChange(null);
+              return null;
+            }
+            triggerChange(new FormData(document.getElementById('upload-file')));
           }
-          let reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onloadstart = function() {
-            changeDisabled(true);
-            changeLoading(true);
-          }
-          reader.onload = function() {
-            triggerChange(reader.result);
-          }
-          reader.onerror = function() {
-            message.error('文件读取失败！');
-            changeDisabled(false);
-            changeLoading(false);
-          }
-          reader.onloadend = function() {
-            changeDisabled(false);
-            changeLoading(false);
-          }
-        }
-      }}
-    />
+        }}
+      />
+    </form>
   );
 }
 
