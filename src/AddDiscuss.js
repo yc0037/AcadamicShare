@@ -47,6 +47,9 @@ class AddDiscuss extends React.Component {
       })
     });
     if (paper === null || paper.code !== 0) {
+      if (paper.msg) {
+        message.error(paper.msg);
+      }
       this.setState({ modalButtonLoading: false });
       return null;
     }
