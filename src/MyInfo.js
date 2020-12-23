@@ -47,7 +47,7 @@ export default class MyInfo extends React.Component {
     const userInfo = await request(`${conf.server}/user_system/get_my_info`);
     let followList = [];
     if (userInfo !== null && Array.isArray(userInfo.follow)) { 
-      followList = await Promise.all(userInfo.follow.map(v => request(`${conf.server}/user_system/get_others_info?username=${v.username}`)));
+      followList = await Promise.all(userInfo.follow.map(v => request(`${conf.server}/user_system/get_others_info?username=${v}`)));
     }
     this.setState({
       userInfo,

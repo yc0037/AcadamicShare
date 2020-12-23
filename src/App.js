@@ -53,7 +53,10 @@ class App extends React.Component {
     .then(result => {
       if (!result.hasOwnProperty('code')) {
         this.setState({
-          userInfo: { userName: result.username }
+          userInfo: { 
+            userName: result.username,
+            ...result
+          }
         });
       } else if (result.code === 123) {
         this.setState({
@@ -82,7 +85,7 @@ class App extends React.Component {
           <Route path="/discuss" component={Discuss} />
           <Route path="/paper" component={Paper} />
           <Route path="/search" component={Search} />
-          <Route path="/adddiscuss" component={AddDiscuss} />
+          <Route path="/adddiscuss" render={routeProps => <AddDiscuss userInfo={userInfo} {...routeProps}/>} />
           <Route path="/userinfo" component={UserInfo} />
           <Route path="/myinfo" render={routeProps => <MyInfo userInfo={userInfo} {...routeProps}/>} />
           <Route path="/test/hello">
