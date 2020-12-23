@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Card, Empty, List, Divider, Button, Avatar } from 'antd';
+import { Row, Col, Card, Empty, List, Divider, Button, Avatar, message } from 'antd';
 import { UserOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import _ from "lodash";
 import { conf } from './conf.js';
-import { wordTrunc } from './utils.js';
+import { request, wordTrunc } from './utils.js';
 import './styles/MainPage.css';
 import "moment/locale/zh-cn";
 moment.locale('zh-cn');
@@ -24,48 +25,53 @@ export default class MainPage extends React.Component {
     };
   }
   componentDidMount() {
-    fetch('/data/discussion.json')
-      .then(response => response.json())
+    request(`${conf.server}/discussion/get_active?offset=0`)
       .then(data => {
-        this.setState({
-          nDiscuss: data.nDiscuss,
-          discussList: data.discussionList,
-          discussLoading: false,
-        });
+        if (data !== null) {
+          this.setState({
+            nDiscuss: data.ndis,
+            discussList: data.dislist,
+            discussLoading: false,
+          });
+        }
       });
-      fetch('/data/hotDiscussion.json')
-        .then(response => response.json())
+      request(`${conf.server}/discussion/get_hot`)
         .then(data => {
           this.setState({
-            hotDiscussList: data,
+            hotDiscussList: data.dislist,
             hotDiscussLoading: false,
         });
       });
-      fetch('/data/starList.json')
-        .then(response => response.json())
-        .then(data => {
+      if (this.props.userInfo) {
+        Promise.all(this.props.userInfo.subscribe.map(tag => (
+          request(`${conf.server}/discussion/get_related?tag=${tag}`)
+            .then(result => {
+              if (result.hasOwnProperty('code') && result.code === 105) {
+                message.error(result.msg);
+                return [];
+              } else {
+                return result.dislist;
+              }
+            })
+        ))).then(arr => {
+          arr = _.flatten(arr);
+          arr = _.uniqWith(arr, _.isEqual);
           this.setState({
-            starList: data,
+            starList: arr,
             starLoading: false,
+          })
         });
-      });
+      }
     this.onLoadMore = this.onLoadMore.bind(this);
   }
-  onLoadMore() {
-    const newDiscussList = this.state.discussList;
-    newDiscussList.push({
-      "id": 6,
-      "tag": "数据库",
-      "title": "Asynchronous memory access chaining",
-      "numOfReply": 3,
-      "lastReply": {
-        "user": "test1",
-        "time": "2020-11-02T13:22:15+08:00"
-      }
-    });
-    this.setState({
-      discussList: newDiscussList
-    });
+  async onLoadMore() {
+    const newDiscussList = await request(`${conf.server}/discussion/get_active?offset=${this.state.discussList.length}`);
+    if (newDiscussList != null) {
+      this.setState(state => ({
+        nDiscuss: newDiscussList.ndis,
+        discussList: [...state.discussList, ...newDiscussList.dislist],
+      }));
+    }
   }
   render() {
     const {
@@ -94,7 +100,7 @@ export default class MainPage extends React.Component {
         ) : <Divider><span style={{ color: "#cccccc", fontSize: "16px" }}>已经到底啦！</span></Divider>
       ) : null;
     const { userInfo } = this.props;
-    const { lastVisit } = starList;
+    const lastVisit = moment().subtract(1, 'days');
     // const userInfo = null;
     return (
       <>
@@ -118,15 +124,15 @@ export default class MainPage extends React.Component {
                   <Col span={24}>
                     <List
                       loading={starLoading}
-                      dataSource={starList.list?.slice(0, 5).sort((a, b) => moment(b.lastReply).diff(moment(a.lastReply)))}
+                      dataSource={starList.slice(0, 5).sort((a, b) => moment(b.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').diff(moment(a.lastReply.time, 'YYYY-MM-DD, HH:mm:ss')))}
                       renderItem={item => (
                         <List.Item className="dash-board-item" key={item.id}>
                           <List.Item.Meta
                             title={
                             <div className="flex">
-                              <div className={`dot-${moment(item.lastReply, moment.ISO_8601).diff(moment(lastVisit, moment.ISO_8601)) > 0}`}><Link to={`/discuss?id=${item.id}`}>{wordTrunc(item.title, 45)}</Link></div>
+                              <div className={`dot-${moment(item.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').diff(lastVisit) > 0}`}><Link to={`/discuss?id=${item.id}`}>{wordTrunc(item.title, 45)}</Link></div>
                               <div className="flex-push time-info">
-                                {moment.duration(moment(item.lastReply, moment.ISO_8601).diff(moment())).locale('zh-cn').humanize(true)}
+                                {moment.duration(moment(item.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').diff(moment())).locale('zh-cn').humanize(true)}
                               </div>
                             </div>
                             }
@@ -199,11 +205,11 @@ export default class MainPage extends React.Component {
                         <List.Item.Meta 
                           title={
                             <div className="discuss-item flex">
-                              <div className="discuss-item-nreply">{value.numOfReply}</div>
-                              <div className="discuss-item-title"><Link to={`/discuss?id=${value.id}`}><span>{`[ ${value.tag} ]`}</span>{` ${value.title}`}</Link></div>
+                              <div className="discuss-item-nreply">{value.replyNumber}</div>
+                              <div className="discuss-item-title"><Link to={`/discuss?id=${value.id}`}>{` ${value.title}`}</Link></div>
                               <div className="discuss-item-reply flex-push">
-                                <div className="discuss-item-reply-user"><UserOutlined style={{ fontSize: "12px" }} /> {value.lastReply.user}</div>
-                                <div className="discuss-item-reply-time time-info">{moment(value.lastReply.time, moment.ISO_8601).format('YYYY-MM-DD HH:mm')}</div>
+                                <div className="discuss-item-reply-user"><UserOutlined style={{ fontSize: "12px" }} /> {value.lastReply.name}</div>
+                                <div className="discuss-item-reply-time time-info">{moment(value.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').format('YYYY-MM-DD HH:mm')}</div>
                               </div>
                             </div>
                           }

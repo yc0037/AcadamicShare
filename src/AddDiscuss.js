@@ -20,6 +20,10 @@ class AddDiscuss extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.userInfo === null) {
+      message.error('请先登录！');
+      this.props.history.replace('/login');
+    }
     this.requestPaperList();
   }
 
@@ -71,7 +75,7 @@ class AddDiscuss extends React.Component {
       },
       body: JSON.stringify({
         id: paper.id,
-        tag: data.tags.split(','),
+        tag: data.tags === '' ? [] : data.tags.split(','),
       }),
     }).then((response) => {
       message.success(paper.msg);
@@ -89,13 +93,16 @@ class AddDiscuss extends React.Component {
       body: JSON.stringify({
         title: data.title,
         text: data.information,
-        paperlist: [data.paper] || []
+        paperlist: data.paper ? [data.paper] : []
       }),
     });
     if (discuss === null || discuss.code !== 0) {
       return;
     }
-    const tags = data.tag_list.split(',');
+    const tags = data.tag_list ? data.tag_list.split(',') : [];
+    if (data.paper) {
+      tags.push(data.paper);
+    }
     request(`${conf.server}/discussion/add_tag`, {
       method: 'POST',
       headers: {
@@ -226,6 +233,12 @@ class AddDiscuss extends React.Component {
             wrapperCol={{span: 16, offset: 1}}
             labelCol={{span: 2}}
             onFinish={this.handleSubmit}
+            initialValues={{
+              title: '',
+              information: '',
+              tag_list: '',
+              paper: -1
+            }}
           >
             <Form.Item
               label="标题"
