@@ -12,23 +12,14 @@ export default class MyInfo extends React.Component {
     super(props);
     this.state = {
       userInfo: {
-        username: 'test',
-        email: 'test@test.org',
-        profile: '内容内容内容内容内容内容内容内容内容内容内容内容内容内容',
-        follow: ['user', 'user', 'user', 'user', 'user', 'user', 'user', 'user'],
-        subscribe: ['tag', 'tag', 'tag', 'tag', 'tag', 'tag']
+        username: '',
+        email: '',
+        profile: '',
+        follow: [],
+        subscribe: []
       },
       loading: false,
-      followList: [
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-      ],
+      followList: [],
       key: '用户',
       public: true,
       profileValue: '',
