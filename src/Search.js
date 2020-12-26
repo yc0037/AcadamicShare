@@ -98,7 +98,7 @@ const MakeResultTypeField = (props) => (
 const MakeSearchInputField = (props) => (
   <Form.List name={props.columnName}>
 	{(fields, { add, remove }) => (
-	  <>
+	  <Space direction='vertical' size='0'>
 		<Space size='middle' style={{ display: 'flex', marginBottom: 8 }} align="baseline">
 		  {/*加号：增加一项*/}
 		  <PlusCircleOutlined onClick={() => add({ type: '0' })} />
@@ -127,7 +127,7 @@ const MakeSearchInputField = (props) => (
 			</Form.Item>
 		  </Space>
 		)}
-	  </>
+	  </Space>
 	)}
   </Form.List>
 )
@@ -154,9 +154,9 @@ function checkDateRange(start,end)
 const MakeSearchRangeField = (props) => (
   <>
 	<Space style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-	  {props.columnName}
 	  <PlusCircleOutlined style={props.display?{transform:'rotate(45deg)'}:{}}
 						  onClick={() => props.openClose(props.columnName)} />
+	  {props.columnName}
 	</Space>
 	<div style={{ display: props.display ? 'flex' : 'none' }}>
 	  <Tooltip title="时间格式：2021.1.1" placement="bottomLeft">
