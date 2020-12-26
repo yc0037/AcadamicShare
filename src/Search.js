@@ -30,7 +30,7 @@ const ShowingResult = (props) => {
 		<Link to={(record.type==='paper'?'/paper':'/discuss')+'?id='+record.id}>
 		  {text}<br/>{record['abstract']}
 		</Link> ),
-	  width: '50%',
+	  //width: '50%',
 	},
 	{
 	  title: <MakeSearchInputField columnName='Tags'/>,
@@ -39,12 +39,12 @@ const ShowingResult = (props) => {
 		<Tag color={colorMap.get(tag)} key={index}>
 		  <a href={'/search?TagsEntire='+tag}>{tag}</a>
 		</Tag> ),
-	  width: '11%',
+	  width: '20%',
 	},
 	{
 	  title: <MakeSearchInputField columnName='Authors'/>,
 	  dataIndex: 'authors',
-	  width: '12%'
+	  width: '20%'
 	},
 	{
 	  title: <MakeSearchRangeField columnName='PublishTime'
