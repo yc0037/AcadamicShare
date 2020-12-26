@@ -200,7 +200,7 @@ export default class MainPage extends React.Component {
                           title={
                             <div className="discuss-item flex">
                               <div className="discuss-item-nreply">{value.numOfReply}</div>
-                              <div className="discuss-item-title"><Link to={`/discuss?id=${value.id}`}><span>{`[ ${value.tag} ]`}</span>{` ${value.title}`}</Link></div>
+                              <div className="discuss-item-title"><Link to={`/paper?id=${value.id}`}><span>{`[ ${value.tag} ]`}</span>{` ${value.title}`}</Link></div>
                               <div className="discuss-item-reply flex-push">
                                 <div className="discuss-item-reply-user"><UserOutlined style={{ fontSize: "12px" }} /> {value.lastReply.user}</div>
                                 <div className="discuss-item-reply-time time-info">{moment(value.lastReply.time, moment.ISO_8601).format('YYYY-MM-DD HH:mm')}</div>

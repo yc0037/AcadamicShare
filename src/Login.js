@@ -21,7 +21,7 @@ class Login extends React.Component {
       },
       body: JSON.stringify({
         username: data.username,
-        password: md5(data.password),
+        password: data.password,
       })
     }).then(result => {
       if (result?.code === LOGIN_FAILED) {
