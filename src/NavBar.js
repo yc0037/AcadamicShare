@@ -6,7 +6,7 @@ import './styles/NavBar.css';
 import { conf } from './conf.js';
 import { request } from './utils.js';
 
-const { Search } = Input;
+// const { Search } = Input;
 
 export default class NavBar extends React.Component {
   constructor(props) {
@@ -39,14 +39,11 @@ export default class NavBar extends React.Component {
 
   render() {
     const userInfo = this.props.userInfo;
-    const searchKeyword = this.state.searchKeyword;
+    // const searchKeyword = this.state.searchKeyword;
     return (
       <div className="nav-bar flex">
         <Link to="/" className="nav-logo">LOGO</Link>
-        <div className="flex-push nav-block">
-          <Switch checked={this.props.login} onChange={this.props.handleSwitch} />
-        </div>
-        <div className="nav-block">
+        {/* <div className="nav-block">
           <Search
             placeholder="请输入搜索关键词"
             value={searchKeyword}
@@ -59,8 +56,8 @@ export default class NavBar extends React.Component {
             }
             size="default"
           />
-        </div>
-        <div className="nav-block" style={{minWidth: "100px"}}>
+        </div> */}
+        <div className="flex-push nav-block" style={{ minWidth: "100px" }}>
           {
             userInfo ?
             <>
