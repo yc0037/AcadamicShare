@@ -93,15 +93,15 @@ class AddDiscuss extends React.Component {
       body: JSON.stringify({
         title: data.title,
         text: data.information,
-        paperlist: data.paper ? [data.paper] : []
+        paperlist: data.paper !== -1 ? [data.paper] : [],
       }),
     });
     if (discuss === null || discuss.code !== 0) {
       return;
     }
     const tags = data.tag_list ? data.tag_list.split(',') : [];
-    if (data.paper) {
-      tags.push(data.paper);
+    if (data.paper !== -1) {
+      tags.push(this.state.paperList[data.paper]['name']);
     }
     request(`${conf.server}/discussion/add_tag`, {
       method: 'POST',
@@ -237,7 +237,7 @@ class AddDiscuss extends React.Component {
               title: '',
               information: '',
               tag_list: '',
-              paper: -1
+              paper: null
             }}
           >
             <Form.Item
@@ -268,23 +268,27 @@ class AddDiscuss extends React.Component {
             </Form.Item>
             <Form.Item
               label="相关论文"
-              name="paper"
             >
-              <Select
-                showSearch
-                placeholder="选择讨论相关的论文"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                }
-                style={{ width: '75%' }}
+              <Form.Item 
+                name="paper"
+                noStyle
               >
-                {
-                  this.state.paperList.map(v => (
-                    <Select.Option value={v.id}>{v.name}</Select.Option>
-                  ))
-                }
-              </Select>
+                <Select
+                  showSearch
+                  placeholder="选择讨论相关的论文"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                  style={{ width: '75%' }}
+                >
+                  {
+                    this.state.paperList.map(v => (
+                      <Select.Option value={v.id}>{v.name}</Select.Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
               <span style={{ margin: '0 5%', color: '#aaaaaa' }}>或者</span>
               <Button
                 type="primary"

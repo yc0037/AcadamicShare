@@ -37,11 +37,19 @@ export default class UserInfo extends React.Component {
     const userInfo = await request(`${conf.server}/user_system/get_others_info?username=${username}`);
     let followList = [];
     if (userInfo !== null && Array.isArray(userInfo.follow)) { 
-      followList = await Promise.all(userInfo.follow.map(v => request(`${conf.server}/user_system/get_others_info?username=${v.username}`)));
+      followList = await Promise.all(userInfo.follow.map(v => (
+        request(`${conf.server}/user_system/get_others_info?username=${v}`)
+          .then(response => {
+            if (response.hasOwnProperty('code') && response.code === 1) {
+              return null;
+            }
+            return response;
+          })
+      )));
       this.setState({
         userInfo,
         loading: userInfo === null,
-        followList,
+        followList: followList.filter(v => (v !== null)),
       });
     } else {
       message.error('用户不存在！');
@@ -72,6 +80,8 @@ export default class UserInfo extends React.Component {
           itemLayout="horizontal"
           dataSource={this.state.followList}
           renderItem={item => (
+            item === null ?
+            null :
             <List.Item>
               <List.Item.Meta
                 title={<Link to={`/userinfo?username=${item.username}`}>{item.username}</Link>}
