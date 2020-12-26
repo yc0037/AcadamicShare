@@ -6,6 +6,8 @@ import { Spin, Tooltip } from 'antd'
 import { Tag } from 'antd'
 //import Highlighter from 'react-highlight-words'
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
+import { PauseCircleOutlined, PlusSquareOutlined, PauseCircleFilled, PlusSquareFilled } from '@ant-design/icons'
+import { SearchOutlined, FileTextOutlined, CommentOutlined } from '@ant-design/icons'
 import url from 'url'
 
 const backend_url='http://localhost:8000/data/search/papers/?'
@@ -30,7 +32,7 @@ const ShowingResult = (props) => {
 		<Link to={(record.type==='paper'?'/paper':'/discuss')+'?id='+record.id}>
 		  {text}<br/>{record['abstract']}
 		</Link> ),
-	  //width: '50%',
+	  width: '45%',
 	},
 	{
 	  title: <MakeSearchInputField columnName='Tags'/>,
@@ -39,12 +41,12 @@ const ShowingResult = (props) => {
 		<Tag color={colorMap.get(tag)} key={index}>
 		  <a href={'/search?TagsEntire='+tag}>{tag}</a>
 		</Tag> ),
-	  width: '20%',
+	  width: '14%',
 	},
 	{
 	  title: <MakeSearchInputField columnName='Authors'/>,
 	  dataIndex: 'authors',
-	  width: '20%'
+	  width: '14%'
 	},
 	{
 	  title: <MakeSearchRangeField columnName='PublishTime'
@@ -84,10 +86,10 @@ const colorMap = {
 //渲染表单输入框：论文还是讨论
 const MakeResultTypeField = (props) => (
   <Form.Item name="Type">
-	<Select>
-	  <Select.Option value="">全部</Select.Option>
-	  <Select.Option value="paper">论文</Select.Option>
-	  <Select.Option value="discussion">讨论</Select.Option>
+	<Select optionLabelProp="label">
+	  <Select.Option label={<SearchOutlined />} value="">全部</Select.Option>
+	  <Select.Option label={<FileTextOutlined />} value="paper">论文</Select.Option>
+	  <Select.Option label={<CommentOutlined />} value="discussion">讨论</Select.Option>
 	</Select>
   </Form.Item>
 )
@@ -97,32 +99,32 @@ const MakeSearchInputField = (props) => (
   <Form.List name={props.columnName}>
 	{(fields, { add, remove }) => (
 	  <>
-		<Space style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-		  {/*搜索条件的名称*/}
-		  {props.columnName}
+		<Space size='middle' style={{ display: 'flex', marginBottom: 8 }} align="baseline">
 		  {/*加号：增加一项*/}
 		  <PlusCircleOutlined onClick={() => add({ type: '0' })} />
 		  {/*add的参数是Select的初始值，用initialValue或defaultValue都会出错，调了好久*/}
+		  {/*搜索条件的名称*/}
+		  {props.columnName}
 		</Space>
 		{/*搜索条件的每一项*/}
 		{fields.map(field => 
 		  <Space style={{ display: 'flex', marginBottom: 8 }} align="baseline" key={field.key} >
+			{/*减号：删除一项*/}
+			<MinusCircleOutlined onClick={() => remove(field.name)} />
 			{/*keyword：字符串，用于匹配*/}
 			<Form.Item {...field}	style={{ marginBottom: 0 }}	name={[field.name, 'keyword']} >
-			  <Input/>
+			  <Input style={{ minWidth: '80px' }}/>
 			</Form.Item>
 			{/*type：0~3，匹配类型*/}
 			<Form.Item {...field} style={{ marginBottom: 0 }}	name={[field.name, 'type']}>
 			  {/*加载页面时的初始值 initialValue="0" 不能用*/}
-			  <Select>{/*defaultValue="0" 增删一项时的初始值，不能用*/}
-				<Select.Option value="0">搜每个词</Select.Option>
-				<Select.Option value="1">搜整句</Select.Option>
-				<Select.Option value="2">避开词</Select.Option>
-				<Select.Option value="3">避开整句</Select.Option>
+			  <Select optionLabelProp="label" style={{ width: '80px' }}>{/*defaultValue="0" 增删一项时的初始值，不能用*/}
+				<Select.Option value="0" label={<PauseCircleOutlined />}>搜每个词</Select.Option>
+				<Select.Option value="1" label={<PlusSquareOutlined />}>搜整句</Select.Option>
+				<Select.Option value="2" label={<PauseCircleFilled />}>避开词</Select.Option>
+				<Select.Option value="3" label={<PlusSquareFilled />}>避开整句</Select.Option>
 			  </Select>
 			</Form.Item>
-			{/*减号：删除一项*/}
-			<MinusCircleOutlined onClick={() => remove(field.name)} />
 		  </Space>
 		)}
 	  </>
@@ -187,6 +189,7 @@ const MakeSearchRangeField = (props) => (
 )
 
 
+//字符串处理、表单处理
 export default class Search extends React.Component {
 
   //一开始进入页面
