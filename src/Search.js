@@ -8,7 +8,7 @@ import { Tag } from 'antd'
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import url from 'url'
 
-const backend_url='http://localhost:8000/data/search/papers/?'
+const backend_url='http://localhost:8000/search/?'
 
 const keywordNames = [ "Keywords", "Tags", "Authors" ]
 const rangeNames = [ "PublishTime", "UpdateTime" ]
@@ -201,7 +201,9 @@ export default class Search extends React.Component {
 		if(this.formRef.current)
 		  this.formRef.current.setFieldsValue(event.state)
 		this.setState({ loading: true })//页面状态变为：加载中
-		fetch(backend_url+this.makeHTTPGETstring(event.state))//向后端发送请求
+		fetch(backend_url+this.makeHTTPGETstring(event.state), {
+      credentials: 'include'
+    })//向后端发送请求
 		  .then(response => response.json())
 		//必须要上一行因为.json()返回的是一个pending的promise什么的，只能读一次，直接给setstate会出错，要then一下
 		  .then(json => this.setState({ loading: false, data: json }))//页面状态变为：加载完成
@@ -223,7 +225,9 @@ export default class Search extends React.Component {
 	//因为有setstate和网络请求，所以放在componentDidMount
 	if(this.formInitialValues) {
 	  this.setState({ loading: true })//页面状态变为：加载中
-	  fetch(backend_url+this.makeHTTPGETstring(this.formInitialValues))//向后端发送请求
+	  fetch(backend_url+this.makeHTTPGETstring(this.formInitialValues), {
+      credentials: 'include'
+    })//向后端发送请求
 	  //用自己生成的 get 请求过滤非法参数
 		.then(response => response.json())
 		.then(json => this.setState({ loading: false, data: json }))//页面状态变为：加载完成
@@ -237,7 +241,9 @@ export default class Search extends React.Component {
 	//pushstate：不重新加载页面，但可以更改网址。本代码里所有window.开头的的函数都是用于实现这个功能的
 	window.history.pushState(values,'新的搜索','?'+query)
 	this.setState({ loading: true })//页面状态变为：加载中
-	fetch(backend_url+query)					//向后端发送请求
+	fetch(backend_url+query, {
+    credentials: 'include'
+  })					//向后端发送请求
 	  .then(response => response.json())
 	  .then(json => this.setState({ loading: false, data: json }))//页面状态变为：加载完成
   }

@@ -42,11 +42,18 @@ export default class MyInfo extends React.Component {
         request(`${conf.server}/user_system/get_others_info?username=${v}`)
           .then(response => {
             if (response.hasOwnProperty('code') && response.code === 1) {
-              return null;
+              return {
+                username: v,
+                exist: false
+              };
             }
-            return response;
+            return {
+              exist: true,
+              ...response
+            };
           })
       )));
+      console.log(followList)
     }
     this.setState({
       userInfo,
@@ -80,10 +87,16 @@ export default class MyInfo extends React.Component {
           dataSource={this.state.followList}
           renderItem={item => (
             <List.Item>
-              <List.Item.Meta
-                title={<Link to={`/userinfo?username=${item.username}`}>{item.username}</Link>}
-                description={wordTrunc(item.profile, 30)}
-              />
+              {
+                item.exist ?
+                <List.Item.Meta
+                  title={<Link to={`/userinfo?username=${item.username}`}>{item.username}</Link>}
+                  description={wordTrunc(item.profile, 30)}
+                /> : 
+                <List.Item.Meta
+                  title={<span style={{ color: '#aaaaaa' }}>用户不存在</span>}
+                />
+              }
             </List.Item>
           )}
         />

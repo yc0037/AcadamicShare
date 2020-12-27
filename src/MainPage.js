@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Card, Empty, List, Divider, Button, Avatar, message } from 'antd';
-import { UserOutlined, PlusOutlined } from '@ant-design/icons';
+import { UserOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import _ from "lodash";
 import { conf } from './conf.js';
 import { request, wordTrunc } from './utils.js';
+import DiscussList from './DiscussList.js';
 import './styles/MainPage.css';
 import "moment/locale/zh-cn";
 moment.locale('zh-cn');
@@ -24,6 +25,7 @@ export default class MainPage extends React.Component {
       starList: [],
       starLoading: true,
     };
+    this.onLoadMore = this.onLoadMore.bind(this);
   }
 
   componentDidMount() {
@@ -66,13 +68,12 @@ export default class MainPage extends React.Component {
         })
       });
     }
-    this.onLoadMore = this.onLoadMore.bind(this);
   }
 
   async onLoadMore() {
     this.setState({
       discussMoreLoading: true,
-    })
+    });
     const newDiscussList = await request(`${conf.server}/discussion/get_active?offset=${this.state.discussList.length}`);
     if (newDiscussList !== null) {
       this.setState(state => ({
@@ -142,31 +143,40 @@ export default class MainPage extends React.Component {
                 userInfo ? 
                 <Row>
                   <Col span={24}>
-                    <List
-                      loading={starLoading}
-                      dataSource={
-                        starList
-                          .sort((a, b) => 
-                            moment(b.lastReply.time, 'YYYY-MM-DD, HH:mm:ss')
-                              .diff(moment(a.lastReply.time, 'YYYY-MM-DD, HH:mm:ss')))
-                          .slice(0, 5)}
-                      renderItem={item => (
-                        <List.Item className="dash-board-item" key={item.id}>
-                          <List.Item.Meta
-                            title={
-                            <div className="flex">
-                              <div className={`dot-${moment(item.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').diff(lastVisit) > 0}`}>
-                                <Link to={`/discuss?id=${item.id}`}>{wordTrunc(item.title, 45)}</Link>
+                    {
+                      starList.length === 0 ?
+                      <div className="flex center" style={{height: "250px"}}>
+                        <Empty
+                          image={Empty.PRESENTED_IMAGE_SIMPLE}
+                          description="No data"
+                        />
+                      </div> :
+                      <List
+                        loading={starLoading}
+                        dataSource={
+                          starList
+                            .sort((a, b) => 
+                              moment(b.lastReply.time, 'YYYY-MM-DD, HH:mm:ss')
+                                .diff(moment(a.lastReply.time, 'YYYY-MM-DD, HH:mm:ss')))
+                            .slice(0, 5)}
+                        renderItem={item => (
+                          <List.Item className="dash-board-item" key={item.id}>
+                            <List.Item.Meta
+                              title={
+                              <div className="flex">
+                                <div className={`dot-${moment(item.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').diff(lastVisit) > 0}`}>
+                                  <Link to={`/discuss?id=${item.id}`}>{wordTrunc(item.title, 45)}</Link>
+                                </div>
+                                <div className="flex-push time-info">
+                                  {moment.duration(moment(item.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').diff(moment())).locale('zh-cn').humanize(true)}
+                                </div>
                               </div>
-                              <div className="flex-push time-info">
-                                {moment.duration(moment(item.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').diff(moment())).locale('zh-cn').humanize(true)}
-                              </div>
-                            </div>
-                            }
-                          />
-                        </List.Item>
-                      )}
-                    />
+                              }
+                            />
+                          </List.Item>
+                        )}
+                      />
+                    }
                   </Col>
                 </Row>
                 :
@@ -186,22 +196,31 @@ export default class MainPage extends React.Component {
               className="dash-board"
               loading={hotDiscussLoading}
             >
-              <List>
-                {
-                  hotDiscussList.map((value, index) => (
-                    <List.Item className="dash-board-item" key={value.id}>
-                      <List.Item.Meta
-                        title={
-                          <div>
-                            <span className={`dash-board-order rank${index + 1}`}>{index + 1}</span>
-                            <span><Link to={`/discuss?id=${value.id}`}>{wordTrunc(value.title, 55)}</Link></span>
-                          </div>
-                        }
-                      />
-                    </List.Item>
-                  ))
-                }
-              </List>
+              {
+                hotDiscussList.length === 0 ?
+                <div className="flex center" style={{height: "250px"}}>
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="No data"
+                  />
+                </div> :
+                <List>
+                  {
+                    hotDiscussList.map((value, index) => (
+                      <List.Item className="dash-board-item" key={value.id}>
+                        <List.Item.Meta
+                          title={
+                            <div>
+                              <span className={`dash-board-order rank${index + 1}`}>{index + 1}</span>
+                              <span><Link to={`/discuss?id=${value.id}`}>{wordTrunc(value.title, 55)}</Link></span>
+                            </div>
+                          }
+                        />
+                      </List.Item>
+                    ))
+                  }
+                </List>
+              }
             </Card>
           </Col>
         </Row>
@@ -217,43 +236,18 @@ export default class MainPage extends React.Component {
               headStyle={{ fontWeight: "bold", }}
               title="全部讨论"
               extra={[
-                <Link to="/adddiscuss"><Button type="primary">
+                <Link to="/adddiscuss"><Button type="primary" style={{ 'margin': 'auto 10px' }}>
                   <span><PlusOutlined /> 发起讨论</span>
+                </Button></Link>,
+                <Link to="/search"><Button type="primary" style={{ 'margin': 'auto 10px' }}>
+                  <span><SearchOutlined /> 搜索讨论</span>
                 </Button></Link>
               ]}
             >
               <List
                 loadMore={loadMore}
               >
-                {
-                  discussList.map(value => {
-                    return (
-                      <List.Item className="dash-board-item" key={value.id}>
-                        <List.Item.Meta 
-                          title={
-                            <div className="discuss-item flex">
-                              <div className="discuss-item-nreply">{value.replyNumber}</div>
-                              <div className="discuss-item-title">
-                                <Link to={`/discuss?id=${value.id}`}>{` ${value.title}`}</Link>
-                              </div>
-                              <div className="discuss-item-reply flex-push">
-                                <div className="discuss-item-reply-user">
-                                  <Link to={`/userinfo?username=${value.lastReply.name}`}>
-                                    <UserOutlined style={{ fontSize: "12px", marginRight: '5px' }} />
-                                    {value.lastReply.name}
-                                  </Link>
-                                </div>
-                                <div className="discuss-item-reply-time time-info">
-                                  {moment(value.lastReply.time, 'YYYY-MM-DD, HH:mm:ss').format('YYYY-MM-DD HH:mm')}
-                                </div>
-                              </div>
-                            </div>
-                          }
-                        />
-                      </List.Item>
-                    );
-                  })
-                }
+                <DiscussList discussList={discussList} />
               </List>
             </Card>
           </Col>

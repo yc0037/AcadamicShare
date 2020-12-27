@@ -12,23 +12,14 @@ export default class UserInfo extends React.Component {
     super(props);
     this.state = {
       userInfo: {
-        username: 'test',
-        email: 'test@test.org',
-        profile: '内容内容内容内容内容内容内容内容内容内容内容内容内容内容',
-        follow: ['user', 'user', 'user', 'user', 'user', 'user', 'user', 'user'],
-        like: ['tag', 'tag', 'tag', 'tag', 'tag', 'tag']
+        username: '',
+        email: '',
+        profile: '',
+        follow: [],
+        like: []
       },
       loading: false,
-      followList: [
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-        {username: 'user', profile: '内容内容内容内容'},
-      ],
+      followList: [],
       key: '用户',
     }
   }
@@ -41,9 +32,15 @@ export default class UserInfo extends React.Component {
         request(`${conf.server}/user_system/get_others_info?username=${v}`)
           .then(response => {
             if (response.hasOwnProperty('code') && response.code === 1) {
-              return null;
+              return {
+                username: v,
+                exist: false
+              };
             }
-            return response;
+            return {
+              exist: true,
+              ...response
+            };
           })
       )));
       this.setState({
@@ -80,13 +77,17 @@ export default class UserInfo extends React.Component {
           itemLayout="horizontal"
           dataSource={this.state.followList}
           renderItem={item => (
-            item === null ?
-            null :
             <List.Item>
-              <List.Item.Meta
-                title={<Link to={`/userinfo?username=${item.username}`}>{item.username}</Link>}
-                description={wordTrunc(item.profile, 30)}
-              />
+              {
+                item.exist ?
+                <List.Item.Meta
+                  title={<Link to={`/userinfo?username=${item.username}`}>{item.username}</Link>}
+                  description={wordTrunc(item.profile, 30)}
+                /> : 
+                <List.Item.Meta
+                  title={<span style={{ color: '#aaaaaa' }}>用户不存在</span>}
+                />
+              }
             </List.Item>
           )}
         />

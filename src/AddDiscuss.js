@@ -35,6 +35,7 @@ class AddDiscuss extends React.Component {
   }
 
   async handleOk(data) {
+    console.log(data)
     this.setState({
       modalButtonLoading: true,
     });
@@ -58,15 +59,17 @@ class AddDiscuss extends React.Component {
       return null;
     }
 
-    data.file.set('id', paper.id);
-    request(`${conf.server}/paper/upload`, {
-      method: 'POST',
-      body: data.file,
-    }).then(response => {
-      if (response.code !== 0) {
-        message.error(response.msg);
-      }
-    });
+    if (data.file) {
+      data.file.set('id', paper.id);
+      request(`${conf.server}/paper/upload`, {
+        method: 'POST',
+        body: data.file,
+      }).then(response => {
+        if (response.code !== 0) {
+          message.error(response.msg);
+        }
+      });
+    }
 
     request(`${conf.server}/paper/add_tag`, {
       method: 'POST',
@@ -77,11 +80,11 @@ class AddDiscuss extends React.Component {
         id: paper.id,
         tag: data.tags === '' ? [] : data.tags.split(','),
       }),
-    }).then((response) => {
-      message.success(paper.msg);
-      this.setState({ modalButtonLoading: false, modalOpen: false });
-      this.requestPaperList();
     });
+
+    message.success(paper.msg);
+    this.setState({ modalButtonLoading: false, modalOpen: false });
+    this.requestPaperList();
   }
 
   async handleSubmit(data) {
@@ -100,8 +103,9 @@ class AddDiscuss extends React.Component {
       return;
     }
     const tags = data.tag_list ? data.tag_list.split(',') : [];
-    if (data.paper !== -1) {
-      tags.push(this.state.paperList[data.paper]['name']);
+    if (data.paper !== null) {
+      const name = this.state.paperList.filter(v => v.id === data.paper)[0]['name'];
+      tags.push(name);
     }
     request(`${conf.server}/discussion/add_tag`, {
       method: 'POST',

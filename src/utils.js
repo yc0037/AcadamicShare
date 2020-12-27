@@ -7,13 +7,19 @@ async function request(url, options) {
       ...options,
     });
     if (response.ok) {
-      return response.json();
+      return {
+        code: 0,
+        ...(await response.json())
+      };
     } else {
       throw new Error(response.status);
     }
   } catch (error) {
-    message.error(`请求失败${error.message ? `(${error.message})` : ''}，请检查你的网络状态或稍后重试。`);
-    return null;
+    // message.error(`请求失败${error.message ? `(${error.message})` : ''}，请检查你的网络状态或稍后重试。`);
+    return {
+      code: -1,
+      msg: `请求失败${error.message ? `(${error.message})` : ''}，请检查你的网络状态或稍后重试。`,
+    };
   }
 }
 

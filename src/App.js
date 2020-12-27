@@ -13,6 +13,7 @@ import Search from './Search';
 import AddDiscuss from './AddDiscuss';
 import UserInfo from './UserInfo';
 import MyInfo from './MyInfo';
+import DisCenter from './DisCenter';
 
 import { conf } from './conf.js';
 
@@ -51,16 +52,16 @@ class App extends React.Component {
   updateLogin() {
     request(`${conf.server}/user_system/get_my_info`)
     .then(result => {
-      if (!result.hasOwnProperty('code')) {
+      if (result.code === 123) {
+        this.setState({
+          userInfo: null
+        });
+      } else {
         this.setState({
           userInfo: { 
             userName: result.username,
             ...result
           }
-        });
-      } else if (result.code === 123) {
-        this.setState({
-          userInfo: null
         });
       }
     });
@@ -85,6 +86,7 @@ class App extends React.Component {
           <Route path="/discuss" component={Discuss} />
           <Route path="/paper" component={Paper} />
           <Route path="/search" component={Search} />
+          <Route path="/discenter" component={DisCenter} />
           <Route path="/adddiscuss" render={routeProps => <AddDiscuss userInfo={userInfo} {...routeProps}/>} />
           <Route path="/userinfo" component={UserInfo} />
           <Route path="/myinfo" render={routeProps => <MyInfo userInfo={userInfo} {...routeProps}/>} />
