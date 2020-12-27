@@ -3,14 +3,15 @@ import { Link } from 'react-router-dom'
 import { Table, Input, Button, Space } from 'antd'
 import { Form, Select } from 'antd'
 import { Spin, Tooltip } from 'antd'
-import { Tag } from 'antd'
+import { Tag, Typography } from 'antd'
 //import Highlighter from 'react-highlight-words'
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import { PauseCircleOutlined, PlusSquareOutlined, PauseCircleFilled, PlusSquareFilled } from '@ant-design/icons'
 import { SearchOutlined, FileTextOutlined, CommentOutlined } from '@ant-design/icons'
 import url from 'url'
 
-const backend_url='http://localhost:8000/data/search/papers/?'
+const backend_url='http://localhost:8000/search?'
+//'https://raw.githubusercontent.com/yc0037/AcadamicShare/dev_htn/public/data/resultsample.json'
 
 const keywordNames = [ "Keywords", "Tags", "Authors" ]
 const rangeNames = [ "PublishTime", "UpdateTime" ]
@@ -30,7 +31,8 @@ const ShowingResult = (props) => {
 	  dataIndex: 'title',
 	  render: (text, record) => (
 		<Link to={(record.type==='paper'?'/paper':'/discuss')+'?id='+record.id}>
-		  {text}<br/>{record['abstract']}
+		  <Typography.Title level={5} style={{ marginBottom: 0 }}>
+		  {text}</Typography.Title>{record['abstract']}
 		</Link> ),
 	  width: '45%',
 	},
@@ -154,7 +156,7 @@ function checkDateRange(start,end)
 const MakeSearchRangeField = (props) => (
   <>
 	<Space style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-	  <PlusCircleOutlined style={props.display?{transform:'rotate(45deg)'}:{}}
+	  <PlusCircleOutlined rotate={props.display && 45}
 						  onClick={() => props.openClose(props.columnName)} />
 	  {props.columnName}
 	</Space>
@@ -229,6 +231,7 @@ export default class Search extends React.Component {
 	  fetch(backend_url+this.makeHTTPGETstring(this.formInitialValues))//向后端发送请求
 	  //用自己生成的 get 请求过滤非法参数
 		.then(response => response.json())
+		.then(json => { console.log(json); return json })
 		.then(json => this.setState({ loading: false, data: json }))//页面状态变为：加载完成
 	}
   }
