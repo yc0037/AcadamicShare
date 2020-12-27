@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles/Login.css';
 import { Card, Form, Input, Button, message } from 'antd';
-//import md5 from 'md5';
+import md5 from 'md5';
 import { withRouter } from 'react-router-dom';
 import { conf } from './conf.js';
 import { request } from './utils.js';
@@ -21,7 +21,7 @@ class Register extends React.Component {
       },
       body: JSON.stringify({
         username: data.username,
-        password: data.password,
+        password: md5(data.password),
       })
     }).then(result => {
       if (result?.code === REGISTER_FAILED) {
