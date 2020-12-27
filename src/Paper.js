@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import { Layout, Switch,Button,List,Space} from 'antd';
+import { Layout, Switch,Button,List,Space,message} from 'antd';
 import {
   EditOutlined,UserOutlined,FieldTimeOutlined,MessageOutlined
 } from '@ant-design/icons';
@@ -101,7 +101,7 @@ class Paper extends React.Component{
         left: 0,
       }}
     >
-    <Button type="primary" block='ture' 
+    <Button type={this.state.url==="file/0.pdf"?"danger":"primary"} block='ture' 
     onClick={this.startRead.bind(this)}  
     >{this.state.start==false?'开始阅读':'返回'}
     </Button>
@@ -169,10 +169,13 @@ class Paper extends React.Component{
   }
 
   startRead(){
+    if(this.state.url==='file/0.pdf'){ message.error("无资源");}
+    else{
     if(this.state.start===true){
       this.setState({globalState:-1,addDisable:true})
     }
     this.setState({start:!this.state.start})
+    }
   }
 
   record(temList){
