@@ -20,19 +20,32 @@ class NoteWriting extends React.Component {
     const { TextArea } = Input;
     let style={
       position:'absolute',
+<<<<<<< HEAD
       top:sTop+200+'px',
+=======
+      top:sTop,
+>>>>>>> 473918a2507daacf99ca14e50bbcfc4d0f87b677
       left: cWidth/4,
       background: '#fff',
       borderRadius: '3px',
       fontSize:'2em',
+<<<<<<< HEAD
       width:'450px',
       
+=======
+      width:'200px',
+>>>>>>> 473918a2507daacf99ca14e50bbcfc4d0f87b677
       zIndex:50 ,
       boxShadow:'2px 2px 2px 2px #888888'  
     }
     let cursorStyle={
+<<<<<<< HEAD
       width:'450px',
       height:'24px',
+=======
+      width:'200px',
+      height:'20px',
+>>>>>>> 473918a2507daacf99ca14e50bbcfc4d0f87b677
       margin:0,
       padding:0,
       background: '#F2F2F2',
@@ -53,6 +66,7 @@ class NoteWriting extends React.Component {
       >
       <div className="handle" style={style}>
       <strong className="cursor" >
+<<<<<<< HEAD
           <div style={cursorStyle}>
           <Button  size='small' type="danger" style={{float:'right',visibility:"visible"}} icon={<CloseOutlined />}
           onClick={()=>this.props.closeComment()}></Button>
@@ -62,6 +76,14 @@ class NoteWriting extends React.Component {
       onChange={(e)=>this.props.changeComment(e,this.props.editIndex)}/>
       <Button size='middle' style={{float:'right'}} onClick={()=>this.props.deleteButton(this.props.editIndex)}>删除</Button>
       <Button size='middle' type="primary" style={{float:'right'}} onClick={()=>this.props.finishComment(this.props.editIndex)}>确定</Button>       
+=======
+          <div style={cursorStyle}></div>
+      </strong>
+      <TextArea style={{margin:'3px 5px 5px 5px',fontsize: 'x-small'}}showCount maxLength={100} value={this.props.comment}
+      onChange={(e)=>this.props.changeComment(e,this.props.editIndex)}/>
+      <Button size='small' style={{float:'right'}} onClick={()=>this.props.deleteButton(this.props.editIndex)}>取消</Button>
+      <Button size='small' type="primary" style={{float:'right'}} onClick={()=>this.props.finishComment(this.props.editIndex)}>确定</Button>       
+>>>>>>> 473918a2507daacf99ca14e50bbcfc4d0f87b677
       </div>
       </Draggable> 
     );
