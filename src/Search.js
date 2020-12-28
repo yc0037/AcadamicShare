@@ -1,14 +1,17 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import { Table, Input, Button, Space } from 'antd'
 import { Form, Select } from 'antd'
 import { Spin, Tooltip } from 'antd'
-import { Tag } from 'antd'
+import { Tag, Typography } from 'antd'
 //import Highlighter from 'react-highlight-words'
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
+import { PauseCircleOutlined, PlusSquareOutlined, PauseCircleFilled, PlusSquareFilled } from '@ant-design/icons'
+import { SearchOutlined, FileTextOutlined, CommentOutlined } from '@ant-design/icons'
 import url from 'url'
 
 const backend_url='http://localhost:8000/search/?'
+//'https://raw.githubusercontent.com/yc0037/AcadamicShare/dev_htn/public/data/resultsample.json'
 
 const keywordNames = [ "Keywords", "Tags", "Authors" ]
 const rangeNames = [ "PublishTime", "UpdateTime" ]
@@ -28,23 +31,24 @@ const ShowingResult = (props) => {
 	  dataIndex: 'title',
 	  render: (text, record) => (
 		<Link to={(record.type==='paper'?'/paper':'/discuss')+'?id='+record.id}>
-		  {text}<br/>{record['abstract']}
+		  <Typography.Title level={5} style={{ marginBottom: 0 }}>
+		  {text}</Typography.Title>{record['abstract']}
 		</Link> ),
-	  //width: '50%',
+	  width: '45%',
 	},
 	{
 	  title: <MakeSearchInputField columnName='Tags'/>,
 	  dataIndex: 'tags',
 	  render: (text) => text.map( (tag, index) =>
 		<Tag color={colorMap.get(tag)} key={index}>
-		  <a href={'/search?TagsEntire='+tag}>{tag}</a>
+		  <Link to={'/discenter?tag='+tag}>{tag}</Link>
 		</Tag> ),
-	  width: '20%',
+	  width: '14%',
 	},
 	{
 	  title: <MakeSearchInputField columnName='Authors'/>,
 	  dataIndex: 'authors',
-	  width: '20%'
+	  width: '14%'
 	},
 	{
 	  title: <MakeSearchRangeField columnName='PublishTime'
@@ -84,10 +88,10 @@ const colorMap = {
 //渲染表单输入框：论文还是讨论
 const MakeResultTypeField = (props) => (
   <Form.Item name="Type">
-	<Select>
-	  <Select.Option value="">全部</Select.Option>
-	  <Select.Option value="paper">论文</Select.Option>
-	  <Select.Option value="discussion">讨论</Select.Option>
+	<Select optionLabelProp="label">
+	  <Select.Option label={<SearchOutlined />} value="">全部</Select.Option>
+	  <Select.Option label={<FileTextOutlined />} value="paper">论文</Select.Option>
+	  <Select.Option label={<CommentOutlined />} value="discussion">讨论</Select.Option>
 	</Select>
   </Form.Item>
 )
@@ -96,36 +100,36 @@ const MakeResultTypeField = (props) => (
 const MakeSearchInputField = (props) => (
   <Form.List name={props.columnName}>
 	{(fields, { add, remove }) => (
-	  <>
-		<Space style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-		  {/*搜索条件的名称*/}
-		  {props.columnName}
+	  <Space direction='vertical' size='0'>
+		<Space size='middle' style={{ display: 'flex', marginBottom: 8 }} align="baseline">
 		  {/*加号：增加一项*/}
 		  <PlusCircleOutlined onClick={() => add({ type: '0' })} />
 		  {/*add的参数是Select的初始值，用initialValue或defaultValue都会出错，调了好久*/}
+		  {/*搜索条件的名称*/}
+		  {props.columnName}
 		</Space>
 		{/*搜索条件的每一项*/}
 		{fields.map(field => 
 		  <Space style={{ display: 'flex', marginBottom: 8 }} align="baseline" key={field.key} >
+			{/*减号：删除一项*/}
+			<MinusCircleOutlined onClick={() => remove(field.name)} />
 			{/*keyword：字符串，用于匹配*/}
 			<Form.Item {...field}	style={{ marginBottom: 0 }}	name={[field.name, 'keyword']} >
-			  <Input/>
+			  <Input style={{ minWidth: '80px' }}/>
 			</Form.Item>
 			{/*type：0~3，匹配类型*/}
 			<Form.Item {...field} style={{ marginBottom: 0 }}	name={[field.name, 'type']}>
 			  {/*加载页面时的初始值 initialValue="0" 不能用*/}
-			  <Select>{/*defaultValue="0" 增删一项时的初始值，不能用*/}
-				<Select.Option value="0">搜每个词</Select.Option>
-				<Select.Option value="1">搜整句</Select.Option>
-				<Select.Option value="2">避开词</Select.Option>
-				<Select.Option value="3">避开整句</Select.Option>
+			  <Select optionLabelProp="label" style={{ width: '80px' }}>{/*defaultValue="0" 增删一项时的初始值，不能用*/}
+				<Select.Option value="0" label={<PauseCircleOutlined />}>搜每个词</Select.Option>
+				<Select.Option value="1" label={<PlusSquareOutlined />}>搜整句</Select.Option>
+				<Select.Option value="2" label={<PauseCircleFilled />}>避开词</Select.Option>
+				<Select.Option value="3" label={<PlusSquareFilled />}>避开整句</Select.Option>
 			  </Select>
 			</Form.Item>
-			{/*减号：删除一项*/}
-			<MinusCircleOutlined onClick={() => remove(field.name)} />
 		  </Space>
 		)}
-	  </>
+	  </Space>
 	)}
   </Form.List>
 )
@@ -152,9 +156,9 @@ function checkDateRange(start,end)
 const MakeSearchRangeField = (props) => (
   <>
 	<Space style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-	  {props.columnName}
-	  <PlusCircleOutlined style={props.display?{transform:'rotate(45deg)'}:{}}
+	  <PlusCircleOutlined rotate={props.display && 45}
 						  onClick={() => props.openClose(props.columnName)} />
+	  {props.columnName}
 	</Space>
 	<div style={{ display: props.display ? 'flex' : 'none' }}>
 	  <Tooltip title="时间格式：2021.1.1" placement="bottomLeft">
@@ -187,13 +191,13 @@ const MakeSearchRangeField = (props) => (
 )
 
 
-export default class Search extends React.Component {
+//字符串处理、表单处理
+class Search extends React.Component {
 
   //一开始进入页面
   constructor(props) {
     super(props)
 	this.state = { loading: false, display: {} }
-
 	//设置 htmlDOM 的函数，可以在浏览器 前进、回退 的时候自动填充表单
 	if(!window.onpopstate)
 	  window.onpopstate = event => {
@@ -207,7 +211,7 @@ export default class Search extends React.Component {
 		  .then(response => response.json())
 		//必须要上一行因为.json()返回的是一个pending的promise什么的，只能读一次，直接给setstate会出错，要then一下
 		  .then(json => this.setState({ loading: false, data: json }))//页面状态变为：加载完成
-	  }
+    }
 
 	//没有 http get 参数，初始化空的搜索页
 	if(!Object.keys(url.parse(this.props.location.search, true).query).length){
@@ -230,6 +234,7 @@ export default class Search extends React.Component {
     })//向后端发送请求
 	  //用自己生成的 get 请求过滤非法参数
 		.then(response => response.json())
+		.then(json => { console.log(json); return json })
 		.then(json => this.setState({ loading: false, data: json }))//页面状态变为：加载完成
 	}
   }
@@ -365,3 +370,5 @@ export default class Search extends React.Component {
 	</Form>
   )
 }
+
+export default withRouter(Search);

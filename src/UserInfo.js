@@ -22,9 +22,19 @@ export default class UserInfo extends React.Component {
       followList: [],
       key: '用户',
     }
+    this.props.history.listen(route => {
+      if (route.pathname !== '/userinfo') {
+        return;
+      }
+      const username = new URLSearchParams(route.search).get('username');
+      this.getUserInfo(username);
+    })
   }
-  async componentDidMount() {
-    const username = new URLSearchParams(this.props.location.search).get('username');
+
+  async getUserInfo(username) {
+    this.setState({
+      loading: true,
+    })
     const userInfo = await request(`${conf.server}/user_system/get_others_info?username=${username}`);
     let followList = [];
     if (userInfo !== null && Array.isArray(userInfo.follow)) { 
@@ -52,6 +62,11 @@ export default class UserInfo extends React.Component {
       message.error('用户不存在！');
       this.props.history.replace('/');
     }
+  }
+
+  async componentDidMount() {
+    const username = new URLSearchParams(this.props.location.search).get('username');
+    this.getUserInfo(username);
   }
 
   onTabChange = (key) => {

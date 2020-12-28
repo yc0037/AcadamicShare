@@ -1,4 +1,4 @@
-import {Comment, Tooltip, Avatar, Input, Button, Card, Tag, Space} from 'antd';
+import {Comment, Tooltip, Avatar, Input, Button, Card, Tag, Space, Col} from 'antd';
 import moment from 'moment';
 import {DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled} from '@ant-design/icons';
 import React from 'react';
@@ -64,7 +64,7 @@ export default class Paper extends React.Component {
     const {reply = []} = comment
     const [question = {}, ...replies] = reply
     return (
-      <div style={{padding: 24}}>
+      <Col span={18} offset={3} style={{padding: 24}}>
         <Card
           className={'card'}
           title={<div><Space>问题描述 {comment.tags && comment.tags.map(tag => <Link to={`/discenter?tag=${tag}`}><Tag
@@ -126,7 +126,7 @@ export default class Paper extends React.Component {
           {papers.filter(i => i).map(item => <div className={'dis-question'}><Tag>{item.id}</Tag>
             <Link to={`/paper?id=${item.id}`}>{item.name}</Link></div>)}
         </Card>
-      </div>
+      </Col>
     );
   }
 }

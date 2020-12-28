@@ -45,5 +45,10 @@
     padding-bottom: 16px;
 }
 .card{
-    box-shadow: 0 0 5px 0 gray;
+    box-shadow: 0 0 20px -5px #cccccc;
+    transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 2px 2px 20px -2px #cccccc;
 }
