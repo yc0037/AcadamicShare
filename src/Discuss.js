@@ -13,6 +13,7 @@ export default class Paper extends React.Component {
       text: '',
       papers: [],
       comment: {},
+      title: '',
     };
 
   like = (id, number) => {
@@ -48,7 +49,7 @@ export default class Paper extends React.Component {
     fetch(dis_url + new URLSearchParams(this.props.location.search).get('id'), {
       credentials: "include"
     }).then(res => res.json()).then(res => {
-      this.setState({comment: res || {}, text: ''})
+      this.setState({comment: res || {}, text: '',title:''})
       const {papers = []} = res
       Promise.all(papers.map(item => fetch('http://localhost:8000/paper/get?id=' + item).then(res=>res.json())))
         .then(papers => this.setState({papers}))
@@ -60,14 +61,14 @@ export default class Paper extends React.Component {
   }
 
   render() {
-    const {comment = {}, text, papers = []} = this.state;
+    const {comment = {}, text, papers = [],title} = this.state;
     const {reply = []} = comment
     const [question = {}, ...replies] = reply
     return (
       <div style={{padding: 24}}>
         <Card
           className={'card'}
-          title={<div><Space>问题描述 {comment.tags && comment.tags.map(tag => <Link to={`/discenter?tag=${tag}`}><Tag
+          title={<div><Space>{comment.title} {comment.tags && comment.tags.map(tag => <Link to={`/discenter?tag=${tag}`}><Tag
             color={'green'} style={{cursor: 'pointer'}}>{tag}</Tag></Link>)}</Space>
             <Button style={{float: 'right'}} onClick={() => {
               const ele = document.getElementsByTagName("html")[0];
@@ -80,7 +81,7 @@ export default class Paper extends React.Component {
           <div className={'dis-question'}>{question.text}</div>
         </Card>
 
-        <Card className={'card'} style={{marginTop: 24}} title={<span>{comment.reply_n} 问题回复</span>}>
+        <Card className={'card'} style={{marginTop: 24}} title={<span>{comment.reply_n} 评论区</span>}>
           <div className={'discuss-content'}>{replies.map((item, index) => (
             <div className={'dis-reply'}>
               <div className={'flex-row'}>
