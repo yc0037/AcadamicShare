@@ -39,7 +39,11 @@ export default class DisCenter extends React.Component {
         <Row>
           <Col span={24}>
             <List>
-              <DiscussList discussList={this.state.discussList} />
+              <DiscussList
+                discussList={this.state.discussList}
+                userInfo={this.props.userInfo}
+                updateLogin={this.props.updateLogin}
+              />
             </List>
           </Col>
         </Row>

@@ -86,7 +86,7 @@ class App extends React.Component {
           <Route path="/discuss" component={Discuss} />
           <Route path="/paper" component={Paper} />
           <Route path="/search" component={Search} />
-          <Route path="/discenter" component={DisCenter} />
+          <Route path="/discenter" render={routeProps => <DisCenter userInfo={userInfo} updateLogin={this.updateLogin} {...routeProps}/>} />
           <Route path="/adddiscuss" render={routeProps => <AddDiscuss userInfo={userInfo} {...routeProps}/>} />
           <Route path="/userinfo" component={UserInfo} />
           <Route path="/myinfo" render={routeProps => <MyInfo userInfo={userInfo} {...routeProps}/>} />
@@ -94,7 +94,7 @@ class App extends React.Component {
             <h1>Hello World!</h1>
           </Route>
           <Route path="/">
-            <MainPage userInfo={userInfo}/>
+            <MainPage userInfo={userInfo} updateLogin={this.updateLogin}/>
           </Route>
         </Switch>
       </BrowserRouter>

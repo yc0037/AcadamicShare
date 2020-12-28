@@ -111,7 +111,7 @@ export default class MainPage extends React.Component {
           </div>
         ) : <Divider><span style={{ color: "#cccccc", fontSize: "16px" }}>已经到底啦！</span></Divider>
       ) : <Divider><span style={{ color: "#cccccc", fontSize: "16px" }}>加载中……</span></Divider>;
-    const { userInfo } = this.props;
+    const { userInfo, updateLogin } = this.props;
     const lastVisit = moment().subtract(1, 'days');
     return (
       <>
@@ -247,7 +247,11 @@ export default class MainPage extends React.Component {
               <List
                 loadMore={loadMore}
               >
-                <DiscussList discussList={discussList} />
+                <DiscussList
+                  discussList={discussList}
+                  userInfo={userInfo}
+                  updateLogin={updateLogin}
+                />
               </List>
             </Card>
           </Col>
