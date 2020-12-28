@@ -2,45 +2,23 @@ import {Comment, Tooltip, Avatar, Input, Button, Card, Tag, Space} from 'antd';
 import moment from 'moment';
 import {DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled} from '@ant-design/icons';
 import React from 'react';
+import {Link} from 'react-router-dom'
 import './styles/Discuss.css'
+
 const dis_url = 'http://localhost:8000/discussion/get_dis?id='
 
 export default class Paper extends React.Component {
   state =
     {
       text: '',
-      comment: {
-        "id": 1,
-        "tags": ["数据库", 'sdfs'],
-        reply_n: 321,
-        creator: 'sfsf',
-        "title": "Hugh Lachlan Kennedy",
-        "time": "2020-11-18T13:14:15+08:00",
-        papers: [{id: 1, name: "Hugh Lachlan Kennedy"}, {id: 2, name: "Hugh Lachlan Kennedy"}],
-        reply: [{
-          id: 12,
-          name: "Hugh Lachlan Kennedy",
-          "time": "2020-11-18T13:14:15+08:00",
-          text: 'Hugh Lachlan Kenned',
-          reconumb: 12
-        }, {
-          name: "Hugh Lachlan Kennedy",
-          "time": "2020-11-18T13:14:15+08:00",
-          text: 'Hugh Lachlan Kenned',
-          reconumb: 12
-        }, {
-          name: "Hugh Lachlan Kennedy",
-          "time": "2020-11-18T13:14:15+08:00",
-          text: 'Hugh Lachlan Kenned',
-          reconumb: 12
-        }]
-      },
+      papers: [],
+      comment: {},
     };
 
-  like = (id,number) => {
+  like = (id, number) => {
     fetch('http://localhost:8000/discussion/reco_up', {
       method: 'POST', body: JSON.stringify({
-        id,number
+        id, number
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -54,7 +32,7 @@ export default class Paper extends React.Component {
   addComment = (to, text) => {
     fetch('http://localhost:8000/discussion/reply', {
       method: 'POST', body: JSON.stringify({
-        to, id:to,text
+        to, id: to, text
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -67,10 +45,13 @@ export default class Paper extends React.Component {
 
 
   getComment = () => {
-    fetch(dis_url +  new URLSearchParams(this.props.location.search).get('id'), {
+    fetch(dis_url + new URLSearchParams(this.props.location.search).get('id'), {
       credentials: "include"
     }).then(res => res.json()).then(res => {
       this.setState({comment: res || {}, text: ''})
+      const {papers = []} = res
+      Promise.all(papers.map(item => fetch('http://localhost:8000/paper/get?id=' + item).then(res=>res.json())))
+        .then(papers => this.setState({papers}))
     })
   }
 
@@ -79,14 +60,15 @@ export default class Paper extends React.Component {
   }
 
   render() {
-    const {comment = {}, text} = this.state;
-    const {papers = [], reply = []} = comment
-    const [question, ...replies] = reply
+    const {comment = {}, text, papers = []} = this.state;
+    const {reply = []} = comment
+    const [question = {}, ...replies] = reply
     return (
       <div style={{padding: 24}}>
         <Card
           className={'card'}
-          title={<div><Space>问题描述 {comment.tags && comment.tags.map(tag => <Tag color={'green'}>{tag}</Tag>)}</Space>
+          title={<div><Space>问题描述 {comment.tags && comment.tags.map(tag => <Link to={`/discenter?tag=${tag}`}><Tag
+            color={'green'} style={{cursor: 'pointer'}}>{tag}</Tag></Link>)}</Space>
             <Button style={{float: 'right'}} onClick={() => {
               const ele = document.getElementsByTagName("html")[0];
               if (ele && ele.scrollHeight > ele.clientHeight) {
@@ -113,7 +95,7 @@ export default class Paper extends React.Component {
               <div>
                 <Tooltip title="Like">
                   {React.createElement(LikeOutlined, {
-                    onClick: () => this.like(comment.id,index+1),
+                    onClick: () => this.like(comment.id, index + 1),
                   })}
                 </Tooltip>
                 <span className="comment-action">{item.reconumb}</span>
@@ -141,11 +123,10 @@ export default class Paper extends React.Component {
           className={'card'}
           style={{marginTop: 24}}
           title='相关论文'>
-          {papers.filter(i=>i).map(item => <div className={'dis-question'}><Tag>{item.id}</Tag>{item.name}</div>)}
+          {papers.filter(i => i).map(item => <div className={'dis-question'}><Tag>{item.id}</Tag>
+            <Link to={`/paper?id=${item.id}`}>{item.name}</Link></div>)}
         </Card>
       </div>
     );
-
   }
-
 }
