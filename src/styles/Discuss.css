@@ -1,0 +1,49 @@
+@import './public.css';
+
+.dis-question {
+    line-height: 44px;
+}
+
+.dis-question:not(:last-child) {
+    border-bottom: 1px solid #eee;
+}
+
+.dis-question span {
+    margin-right: 20px;
+}
+
+.discuss-header {
+    height: 50px;
+    padding-left: 24px;
+    line-height: 50px;
+    border-bottom: 1px solid #eee;
+}
+
+.discuss-content {
+}
+
+.discuss-add {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: bolder;
+}
+
+
+.discuss-public {
+    float: right;
+    margin-top: -22px;
+}
+.flex-row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.dis-reply:not(:last-child){
+    border-bottom: 1px solid #eee;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+}
+.card{
+    box-shadow: 0 0 5px 0 gray;
+}
