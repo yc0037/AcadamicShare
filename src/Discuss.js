@@ -49,9 +49,9 @@ export default class Paper extends React.Component {
     fetch(dis_url + new URLSearchParams(this.props.location.search).get('id'), {
       credentials: "include"
     }).then(res => res.json()).then(res => {
-      this.setState({comment: res || {}, text: '',title:''})
+      this.setState({comment: res || {}, text: '', title: ''})
       const {papers = []} = res
-      Promise.all(papers.map(item => fetch('http://localhost:8000/paper/get?id=' + item).then(res=>res.json())))
+      Promise.all(papers.map(item => fetch('http://localhost:8000/paper/get?id=' + item).then(res => res.json())))
         .then(papers => this.setState({papers}))
     })
   }
@@ -61,14 +61,15 @@ export default class Paper extends React.Component {
   }
 
   render() {
-    const {comment = {}, text, papers = [],title} = this.state;
+    const {comment = {}, text, papers = [], title} = this.state;
     const {reply = []} = comment
     const [question = {}, ...replies] = reply
     return (
       <Col span={18} offset={3} style={{padding: 24}}>
         <Card
           className={'card'}
-          title={<div><Space>{comment.title} {comment.tags && comment.tags.map(tag => <Link to={`/discenter?tag=${tag}`}><Tag
+          title={<div><Space>{comment.title} {comment.tags && comment.tags.map(tag => <Link
+            to={`/discenter?tag=${tag}`}><Tag
             color={'green'} style={{cursor: 'pointer'}}>{tag}</Tag></Link>)}</Space>
             <Button style={{float: 'right'}} onClick={() => {
               const ele = document.getElementsByTagName("html")[0];
@@ -92,7 +93,7 @@ export default class Paper extends React.Component {
                 <div style={{flex: 1}}></div>
                 <span style={{color: 'grey'}}>{moment(item.time).format('YYYY-MM-DD HH:mm:ss')}</span>
               </div>
-              <div style={{margin: '24px 0'}}>{item.text}</div>
+              <div style={{margin: '24px 0', whiteSpace: "pre-wrap"}}>{item.text}</div>
               <div>
                 <Tooltip title="Like">
                   {React.createElement(LikeOutlined, {
